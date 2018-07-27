@@ -1,6 +1,6 @@
 # bpm-people-api
 
-In order to work on this project make sure you have installed NodeJS.
+In order to work on this project make sure you have installed NodeJS v8.11.3
 
 ## Installing the dependencies
 
