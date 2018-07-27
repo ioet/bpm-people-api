@@ -2,7 +2,6 @@
 
 import express from 'express';
 import generateSafeId from 'generate-safe-id';
-import dynamoose  from 'dynamoose';
 import bodyParser from 'body-parser'; 
 import Person from './../domain/Person'
 
