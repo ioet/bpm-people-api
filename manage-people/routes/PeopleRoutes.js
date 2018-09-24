@@ -15,7 +15,7 @@ const peopleRoutes = (app) => {
         .get('/', (req, res) => {
             Person.scan().exec(function (err, data) {
                 if(err) {
-                    return res.status(500).send({message: err});
+                    return res.status(500).send({message: 'Doh...'});
                 } else {
                     res.status(200).send(data);
                 }
@@ -33,7 +33,7 @@ const peopleRoutes = (app) => {
 
             newPerson.save(function (err) {
                 if(err) {
-                    return res.status(500).send({message: err});
+                    return res.status(500).send({message: 'Doh...'});
                 } else {
                     res.status(201).send(newPerson);
                 }
@@ -45,7 +45,7 @@ const peopleRoutes = (app) => {
 
             Person.delete({guid: req.params.personId}, function(err, data) {
                 if(err) {
-                    return res.status(500).send({message: err});
+                    return res.status(500).send({message: 'Doh...'});
                 } else {
                     res.status(200).send(data);
                 }
@@ -61,7 +61,7 @@ const peopleRoutes = (app) => {
                 authentication_identity: req.body.authentication_identity
             }, function(err, data) {
                 if(err) {
-                   return res.status(422).send({message: err});
+                   return res.status(422).send({message: 'Doh...'});
                 } else {
                   res.status(200).send(data);
                 }
