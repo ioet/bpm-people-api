@@ -15,7 +15,7 @@ const peopleRoutes = (app) => {
         .get('/', (req, res) => {
             Person.scan().exec(function (err, data) {
                 if(err) {
-                    return res.status(500).send({message: 'Doh...'});
+                    return res.status(500).send({message: err});
                 } else {
                     res.status(200).send(data);
                 }
@@ -33,7 +33,7 @@ const peopleRoutes = (app) => {
 
             newPerson.save(function (err) {
                 if(err) {
-                    return res.status(500).send({message: 'Doh...'});
+                    return res.status(500).send({message: err});
                 } else {
                     res.status(201).send(newPerson);
                 }
@@ -43,11 +43,11 @@ const peopleRoutes = (app) => {
     router
         .delete('/:personId', (req, res) => {
 
-            Person.delete({guid: req.params.personId}, function(err) {
+            Person.delete({guid: req.params.personId}, function(err, data) {
                 if(err) {
-                    return res.status(500).send({message: 'Doh...'});
+                    return res.status(500).send({message: err});
                 } else {
-                    res.status(200).send();
+                    res.status(200).send(data);
                 }
             });
         });
@@ -59,11 +59,11 @@ const peopleRoutes = (app) => {
                 guid: req.params.personId,
                 display_name: req.body.display_name,
                 authentication_identity: req.body.authentication_identity
-            }, function(err) {
+            }, function(err, data) {
                 if(err) {
-                   return res.status(500).send({message: 'Doh...'});
+                   return res.status(422).send({message: err});
                 } else {
-                  res.status(200).send();
+                  res.status(200).send(data);
                 }
             });
         });
