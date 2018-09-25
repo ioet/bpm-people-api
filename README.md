@@ -1,26 +1,25 @@
 # bpm-people-api
 
-In order to work on this project make sure you have installed NodeJS v8.11.3
+## Swagger
 
-## Installing the dependencies
-
-```
-npm install
-```
-
-## Running the app
+Swagger is integrated and available in this URL:
 
 ```
-npm start
+http://IP_ADDRESS:PORT/swagger-ui.html
 ```
 
-Go to http://localhost:3000/people
+## Docker
 
-## Running tests
+The project has integrated a docker plugin so you can generate a docker image using the following Gradle task:
 
 ```
-npm test
+$ ./gradlew build docker
 ```
+
+Don't forget to pass the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to make it work locally.
+For any other environment the credentials should be provided by the CI server.
+
+
 
 ## Dynamo
 
@@ -40,19 +39,19 @@ So far you can create, query and delete people using the API.
 Query people
 
 ```
-curl -X GET http://localhost:3000/people
+curl -X GET http://localhost:8080/people
 ```
 
 
 Create a new person
 
 ```
-curl -X POST http://localhost:3000/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authentication_identity": "youremail@domain.com"}'
+curl -X POST http://localhost:8080/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authenticationIdentity": "youremail@domain.com"}'
 ```
 
 Delete an existing person
 
 ```
-curl -X DELETE http://localhost:3000/people/{PERSON_ID}
+curl -X DELETE http://localhost:8080/people/{PERSON_ID}
 ```
 
