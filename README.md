@@ -39,19 +39,13 @@ So far you can create, query and delete people using the API.
 Query people
 
 ```
-curl -X GET http://localhost:8080/people
+curl -X GET http://localhost:8081/people
 ```
 
 
 Create a new person
 
 ```
-curl -X POST http://localhost:8080/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authenticationIdentity": "youremail@domain.com"}'
-```
-
-Delete an existing person
-
-```
-curl -X DELETE http://localhost:8080/people/{PERSON_ID}
+curl -X POST http://localhost:8081/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authenticationIdentity": "youremail@domain.com"}'
 ```
 
