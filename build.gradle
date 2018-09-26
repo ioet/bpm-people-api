@@ -53,6 +53,15 @@ dependencyManagement {
     }
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
+
 docker {
     name "enriquezrene/${jar.baseName}:${version}"
     files jar.archivePath
