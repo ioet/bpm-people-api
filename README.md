@@ -48,15 +48,15 @@ Create a new person
 ```
 curl -X POST http://localhost:8081/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authenticationIdentity": "youremail@domain.com"}'
 ```
-## Configuring in the IDE Intellij
-For run or debugger, this project in Intellij must configure the environment variables into the IntelliJ, to do this, do this following steps.
+## Configuring IntelliJ IDE
+If you want to run the application from IntelliJ you must configure the required environment variables following the next steps:
 
 Setting the environment variables
 
 ```
 1. Go to menu Run and choose Edit Configurations.
-2. It is shown the window of configurations, and go to the tab Configuration.
-3. Finally, add the environment variables AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID, and AWS_REGION with theirs values
+2. It will show a configurations window. Go to the tab Configuration.
+3. Add the required environment variables AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID, and AWS_REGION with the correspondent values.
 ```
 
 Run or Debug
