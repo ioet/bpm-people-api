@@ -24,7 +24,7 @@ public class PeopleControllerTest {
     @Test
     public void peopleAreListedUsingTheRepository() throws Exception {
 
-        ResponseEntity<Iterable> skills =  personController.listAll();
+        ResponseEntity<Iterable> skills =  personController.getAllPersons();
 
         Assert.assertEquals(HttpStatus.OK, skills.getStatusCode());
         Mockito.verify(personRepository, Mockito.times(1)).findAll();
@@ -36,7 +36,7 @@ public class PeopleControllerTest {
         Person personCreated= Mockito.mock(Person.class);
         Mockito.when(personRepository.save(personToCreate)).thenReturn(personCreated);
 
-        ResponseEntity<Person> personCreatedResponse =  personController.create(personToCreate);
+        ResponseEntity<Person> personCreatedResponse =  personController.createPerson(personToCreate);
 
         Assert.assertEquals(personCreated, personCreatedResponse.getBody());
         Assert.assertEquals(HttpStatus.CREATED, personCreatedResponse.getStatusCode());
