@@ -48,4 +48,20 @@ Create a new person
 ```
 curl -X POST http://localhost:8081/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authenticationIdentity": "youremail@domain.com"}'
 ```
+## Configuring IntelliJ IDE
+If you want to run the application from IntelliJ you must configure the required environment variables following the next steps:
+
+Setting the environment variables
+
+```
+1. Go to menu Run and choose Edit Configurations.
+2. It will show a configurations window. Go to the tab Configuration.
+3. Add the required environment variables AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID, and AWS_REGION with the correspondent values.
+```
+
+Run or Debug
+
+```
+Now, you can run or debug the app from IntelliJ, you can use JRbel to debug and redeploy the app.
+```
 
