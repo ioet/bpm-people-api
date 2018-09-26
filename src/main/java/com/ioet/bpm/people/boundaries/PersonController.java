@@ -42,27 +42,26 @@ public class PersonController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable(value = "id") String personId) {
         Optional<Person> person = personRepository.findById(personId);
-        if (!person.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (person.isPresent()) {
+            personRepository.delete(person.get());
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-
-        personRepository.delete(person.get());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Person> updatePerson(@PathVariable(value = "id") String personId,
-                                             @Valid @RequestBody Person personDetails) {
+                                             @Valid @RequestBody Person personToUpdate) {
 
-        Optional<Person> personOptional = personRepository.findById(personId);
-        if (!personOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Person> personFound = personRepository.findById(personId);
+
+        if (personFound.isPresent()) {
+            personToUpdate.setId(personId);
+            Person updatedPerson = personRepository.save(personToUpdate);
+            return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        Person person = personOptional.get();
-        person.setName(personDetails.getName());
-        person.setAuthenticationIdentity(personDetails.getAuthenticationIdentity());
-        personRepository.save(person);
-        return new ResponseEntity<>(person, HttpStatus.OK);
+
     }
 }
