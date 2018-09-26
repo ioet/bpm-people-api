@@ -31,7 +31,7 @@ public class PeopleControllerTest {
         ResponseEntity<Iterable> persons = personController.getAllPersons();
 
         assertEquals(HttpStatus.OK, persons.getStatusCode());
-        verify(personRepository, times(1)).findAll();
+        verify(personRepository, times(2)).findAll();
     }
 
     @Test
