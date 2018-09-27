@@ -26,4 +26,8 @@ public class Person {
     @DynamoDBAttribute
     private String authenticationIdentity;
 
+    @NotBlank
+    @DynamoDBAttribute
+    private String password;
+
 }
