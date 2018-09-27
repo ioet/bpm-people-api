@@ -2,6 +2,7 @@ package com.ioet.bpm.people.boundaries;
 
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
+import com.ioet.bpm.people.utils.PasswordStorage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -10,6 +11,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -35,9 +38,12 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void whenAPersonIsCreatedTheNewPersonIsReturned() {
-        Person personToCreate = mock(Person.class);
+    public void whenAPersonIsCreatedTheNewPersonIsReturned() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         Person personCreated = mock(Person.class);
+
+        Person personToCreate = new Person();
+        personToCreate.setPassword("ioet");
+
         when(personRepository.save(personToCreate)).thenReturn(personCreated);
 
         ResponseEntity<Person> personCreatedResponse = personController.createPerson(personToCreate);
@@ -100,7 +106,7 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void ifThePersonToUpdateDoesNotExistA404IsReturned() {
+    public void ifThePersonToUpdateDoesNotExistA404IsReturned() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         String id = "id";
         when(personRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -110,11 +116,12 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void whenAPersonIsUpdatedTheUpdatedPersonIsReturned() {
-
+    public void whenAPersonIsUpdatedTheUpdatedPersonIsReturned() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         String idPersonToUpdate = "id";
-        Person personToUpdate = mock(Person.class);
         Person updatedPerson = mock(Person.class);
+
+        Person personToUpdate = new Person();
+        personToUpdate.setPassword("ioet");
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(mock(Person.class)));
         when(personRepository.save(personToUpdate)).thenReturn(updatedPerson);
