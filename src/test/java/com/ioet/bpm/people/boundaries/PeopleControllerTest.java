@@ -2,7 +2,6 @@ package com.ioet.bpm.people.boundaries;
 
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
-import com.ioet.bpm.people.utils.PasswordStorage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
