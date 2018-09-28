@@ -26,7 +26,6 @@ public class Person extends AbstractEntity {
     @DynamoDBAttribute
     private String authenticationIdentity;
 
-    @NotBlank
     @DynamoDBAttribute
     private String password;
 

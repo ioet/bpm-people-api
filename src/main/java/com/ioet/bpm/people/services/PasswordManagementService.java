@@ -9,10 +9,10 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 @Component
-public class PersonService {
+public class PasswordManagementService {
 
     private static final String ALGORITHM = "SHA-512";
-    private static final int ITERATIONS = 64000;
+    private static final int ITERATIONS = 10;
     private static final int SALT_SIZE = 64;
 
 
@@ -21,6 +21,7 @@ public class PersonService {
         byte[] hash = calculateHash(password, salt);
         return Base64.getEncoder().encodeToString(salt).concat(":").concat(Base64.getEncoder().encodeToString(hash));
     }
+
 
     public byte[] calculateHash(String password, byte[] salt) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {

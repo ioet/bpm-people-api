@@ -2,7 +2,7 @@ package com.ioet.bpm.people.boundaries;
 
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
-import com.ioet.bpm.people.services.PersonService;
+import com.ioet.bpm.people.services.PasswordManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +20,11 @@ public class PersonController {
     private final PersonRepository personRepository;
 
     @Autowired
-    private PersonService personService;
+    private PasswordManagementService passwordManagementService;
 
-    public PersonController(PersonRepository personRepository) {
+    public PersonController(PersonRepository personRepository, PasswordManagementService passwordManagementService) {
         this.personRepository = personRepository;
+        this.passwordManagementService = passwordManagementService;
     }
 
     @GetMapping
@@ -43,7 +44,7 @@ public class PersonController {
     @PostMapping
     public ResponseEntity<Person> createPerson(@RequestBody Person person) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
-        person.setPassword(personService.generatePassword(person.getPassword()));
+        person.setPassword(passwordManagementService.generatePassword(person.getPassword()));
         Person personCreated = personRepository.save(person);
         return new ResponseEntity<>(personCreated, HttpStatus.CREATED);
     }
@@ -60,18 +61,29 @@ public class PersonController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Person> updatePerson(@PathVariable(value = "id") String personId,
-                                               @Valid @RequestBody Person personToUpdate) throws UnsupportedEncodingException,
-            NoSuchAlgorithmException {
+                                               @Valid @RequestBody Person personToUpdate) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
         Optional<Person> personFound = personRepository.findById(personId);
         if (personFound.isPresent()) {
-            personFound.get().setPassword(personService.generatePassword(personToUpdate.getPassword()));
-            personFound.get().setName(personToUpdate.getName());
-            personFound.get().setAuthenticationIdentity(personToUpdate.getAuthenticationIdentity());
-            Person updatedPerson = personRepository.save(personFound.get());
+            personToUpdate.setId(personFound.get().getId());
+            personToUpdate.setPassword(personFound.get().getPassword());
+            Person updatedPerson = personRepository.save(personToUpdate);
             return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<Person> changePassword(@PathVariable(value = "id") String personId,
+                                                 @Valid @RequestBody Person personToUpdate) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
+        Optional<Person> personFound = personRepository.findById(personId);
+        if (personFound.isPresent()) {
+            personToUpdate.setId(personFound.get().getId());
+            personToUpdate.setPassword(passwordManagementService.generatePassword(personToUpdate.getPassword()));
+            Person updatedPerson = personRepository.save(personToUpdate);
+            return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
