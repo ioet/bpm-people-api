@@ -9,9 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/people")
@@ -42,7 +41,7 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<Person> createPerson(@RequestBody Person person) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public ResponseEntity<Person> createPerson(@RequestBody Person person) {
 
         person.setPassword(passwordManagementService.generatePassword(person.getPassword()));
         Person personCreated = personRepository.save(person);
@@ -50,7 +49,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePerson(@PathVariable(value = "id") String personId) {
+    public ResponseEntity<Person> deletePerson(@PathVariable(value = "id") String personId) {
         Optional<Person> person = personRepository.findById(personId);
         if (person.isPresent()) {
             personRepository.delete(person.get());
@@ -61,7 +60,7 @@ public class PersonController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Person> updatePerson(@PathVariable(value = "id") String personId,
-                                               @Valid @RequestBody Person personToUpdate) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+                                               @Valid @RequestBody Person personToUpdate) {
 
         Optional<Person> personFound = personRepository.findById(personId);
         if (personFound.isPresent()) {
@@ -73,9 +72,9 @@ public class PersonController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/change-password/{id}")
+    @PostMapping("/change-password/{id}")
     public ResponseEntity<Person> changePassword(@PathVariable(value = "id") String personId,
-                                                 @Valid @RequestBody Person personToUpdate) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+                                                 @Valid @RequestBody Person personToUpdate) {
 
         Optional<Person> personFound = personRepository.findById(personId);
         if (personFound.isPresent()) {

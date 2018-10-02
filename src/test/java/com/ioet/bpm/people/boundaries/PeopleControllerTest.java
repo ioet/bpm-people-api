@@ -11,8 +11,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +38,7 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void whenAPersonIsCreatedTheNewPersonIsReturned() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public void whenAPersonIsCreatedTheNewPersonIsReturned() {
         Person personCreated = mock(Person.class);
 
         Person personToCreate = new Person();
@@ -50,7 +48,9 @@ public class PeopleControllerTest {
 
         when(personRepository.save(personToCreate)).thenReturn(personCreated);
 
-        ResponseEntity<Person> personCreatedResponse = personController.createPerson(personToCreate);
+        ResponseEntity<Person> personCreatedResponse = null;
+
+        personCreatedResponse = personController.createPerson(personToCreate);
 
         assertEquals(personCreated, personCreatedResponse.getBody());
         assertEquals(HttpStatus.CREATED, personCreatedResponse.getStatusCode());
@@ -112,7 +112,7 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void ifThePersonToUpdateDoesNotExistA404IsReturned() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public void ifThePersonToUpdateDoesNotExistA404IsReturned() {
         String id = "id";
         when(personRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -122,7 +122,7 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void whenAPersonIsUpdatedTheUpdatedPersonIsReturned() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public void whenAPersonIsUpdatedTheUpdatedPersonIsReturned() {
         Person personUpdated = mock(Person.class);
         Optional<Person> personFound = Optional.of(mock(Person.class));
 
@@ -140,7 +140,7 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void whenAPersonIsUpdatedTheChangePasswordIsReturned() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public void whenAPersonIsUpdatedTheChangePasswordIsReturned() {
         Person personUpdated = mock(Person.class);
         Optional<Person> personFound = Optional.of(mock(Person.class));
 
@@ -149,7 +149,9 @@ public class PeopleControllerTest {
         personToUpdate.setPassword("ioet");
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
+
         when(passwordManagementService.generatePassword(personToUpdate.getPassword())).thenReturn(personToUpdate.getPassword());
+
         when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
 
         ResponseEntity<Person> updatedPersonResponse = personController.changePassword(idPersonToUpdate, personToUpdate);
