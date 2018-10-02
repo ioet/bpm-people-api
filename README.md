@@ -1,6 +1,7 @@
 # bpm-people-api
 
-##Build Status and Code coverage
+## Build Status and Code coverage
+
 [![Build Status](https://travis-ci.org/ioet/bpm-people-api.svg?branch=master)](https://travis-ci.org/ioet/bpm-people-api)
 [![Code Coverage](https://codecov.io/gh/ioet/bpm-people-api/branch/master/graph/badge.svg)](https://codecov.io/gh/ioet/bpm-people-api)
 
