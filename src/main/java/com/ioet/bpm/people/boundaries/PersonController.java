@@ -1,8 +1,11 @@
 package com.ioet.bpm.people.boundaries;
 
+import com.ioet.bpm.people.domain.PasswordHistory;
 import com.ioet.bpm.people.domain.Person;
+import com.ioet.bpm.people.repositories.PasswordHistoryRepository;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,19 +15,17 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/people")
 public class PersonController {
 
     private final PersonRepository personRepository;
+    private final PasswordHistoryRepository passwordHistoryRepository;
 
     @Autowired
     private PasswordManagementService passwordManagementService;
 
-    public PersonController(PersonRepository personRepository, PasswordManagementService passwordManagementService) {
-        this.personRepository = personRepository;
-        this.passwordManagementService = passwordManagementService;
-    }
 
     @GetMapping
     public ResponseEntity<Iterable> getAllPersons() {
@@ -81,6 +82,10 @@ public class PersonController {
             personToUpdate.setId(personFound.get().getId());
             personToUpdate.setPassword(passwordManagementService.generatePassword(personToUpdate.getPassword()));
             Person updatedPerson = personRepository.save(personToUpdate);
+
+            PasswordHistory passwordHistory = passwordManagementService.createPasswordHistory(personToUpdate);
+            passwordHistoryRepository.save(passwordHistory);
+
             return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

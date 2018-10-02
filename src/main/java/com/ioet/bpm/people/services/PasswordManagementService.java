@@ -1,5 +1,7 @@
 package com.ioet.bpm.people.services;
 
+import com.ioet.bpm.people.domain.PasswordHistory;
+import com.ioet.bpm.people.domain.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -63,5 +65,12 @@ public class PasswordManagementService {
             diff |= originalHash[i] ^ comparisonHash[i];
         }
         return diff == 0;
+    }
+
+    public PasswordHistory createPasswordHistory(Person person) {
+        PasswordHistory passwordHistory = new PasswordHistory();
+        passwordHistory.setPersonId(person.getId());
+        passwordHistory.setPassword(person.getPassword());
+        return passwordHistory;
     }
 }
