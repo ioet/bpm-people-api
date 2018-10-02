@@ -95,7 +95,7 @@ public class PeopleControllerTest {
         ResponseEntity<?> deletedPersonResponse = personController.deletePerson(personIdToDelete);
 
         assertNull(deletedPersonResponse.getBody());
-        assertEquals(HttpStatus.OK, deletedPersonResponse.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, deletedPersonResponse.getStatusCode());
         verify(personRepository, times(1)).delete(personToDelete);
     }
 
