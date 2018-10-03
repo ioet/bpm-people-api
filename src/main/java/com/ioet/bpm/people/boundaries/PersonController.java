@@ -4,7 +4,6 @@ import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,6 @@ public class PersonController {
 
     private final PersonRepository personRepository;
 
-    @Autowired
     private PasswordManagementService passwordManagementService;
 
 
