@@ -44,7 +44,7 @@ public class PersonController {
         Optional<Person> person = personRepository.findById(personId);
         if (person.isPresent()) {
             personRepository.delete(person.get());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
