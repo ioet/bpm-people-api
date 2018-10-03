@@ -79,6 +79,7 @@ public class PersonController {
 
         Optional<Person> personFound = personRepository.findById(personId);
         if (personFound.isPresent()) {
+
             personToUpdate.setId(personFound.get().getId());
             personToUpdate.setPassword(passwordManagementService.generatePassword(personToUpdate.getPassword()));
             Person updatedPerson = personRepository.save(personToUpdate);
