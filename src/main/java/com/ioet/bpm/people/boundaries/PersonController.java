@@ -1,8 +1,6 @@
 package com.ioet.bpm.people.boundaries;
 
-import com.ioet.bpm.people.domain.PasswordHistory;
 import com.ioet.bpm.people.domain.Person;
-import com.ioet.bpm.people.repositories.PasswordHistoryRepository;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
 import lombok.AllArgsConstructor;
@@ -21,7 +19,6 @@ import java.util.Optional;
 public class PersonController {
 
     private final PersonRepository personRepository;
-    private final PasswordHistoryRepository passwordHistoryRepository;
 
     @Autowired
     private PasswordManagementService passwordManagementService;
@@ -84,8 +81,7 @@ public class PersonController {
             personToUpdate.setPassword(passwordManagementService.generatePassword(personToUpdate.getPassword()));
             Person updatedPerson = personRepository.save(personToUpdate);
 
-            PasswordHistory passwordHistory = passwordManagementService.createPasswordHistory(personToUpdate);
-            passwordHistoryRepository.save(passwordHistory);
+            passwordManagementService.recordPasswordHistory(personToUpdate);
 
             return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }

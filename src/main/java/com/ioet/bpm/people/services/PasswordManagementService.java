@@ -2,8 +2,9 @@ package com.ioet.bpm.people.services;
 
 import com.ioet.bpm.people.domain.PasswordHistory;
 import com.ioet.bpm.people.domain.Person;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ioet.bpm.people.repositories.PasswordHistoryRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -12,14 +13,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+@Slf4j
+@AllArgsConstructor
 @Component
 public class PasswordManagementService {
 
-    private static final Logger log = LoggerFactory.getLogger(PasswordManagementService.class);
     private static final String ALGORITHM = "SHA-512";
     private static final int ITERATIONS = 64000;
     private static final int SALT_SIZE = 64;
 
+    private final PasswordHistoryRepository passwordHistoryRepository;
 
     public String generatePassword(String password) {
         byte[] salt = generateSalt();
@@ -72,5 +75,10 @@ public class PasswordManagementService {
         passwordHistory.setPersonId(person.getId());
         passwordHistory.setPassword(person.getPassword());
         return passwordHistory;
+    }
+
+    public void recordPasswordHistory(Person person) {
+        PasswordHistory passwordHistory = createPasswordHistory(person);
+        passwordHistoryRepository.save(passwordHistory);
     }
 }

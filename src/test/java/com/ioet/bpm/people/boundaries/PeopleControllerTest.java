@@ -147,7 +147,7 @@ public class PeopleControllerTest {
         String idPersonToUpdate = "id";
         Person personToUpdate = new Person();
         personToUpdate.setPassword("ioet");
-
+        
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
 
         when(passwordManagementService.generatePassword(personToUpdate.getPassword())).thenReturn(personToUpdate.getPassword());
@@ -158,8 +158,10 @@ public class PeopleControllerTest {
 
         assertEquals(personUpdated, updatedPersonResponse.getBody());
         assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());
+
         verify(personRepository, times(1)).save(personToUpdate);
         verify(passwordManagementService, times(1)).generatePassword(personToUpdate.getPassword());
+        verify(passwordManagementService, times(1)).recordPasswordHistory(personToUpdate);
 
     }
 
