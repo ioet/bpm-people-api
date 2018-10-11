@@ -20,7 +20,7 @@ You will be able to see the people-api service registered in eureka here:
 http://localhost:8761/
 ```
 
-And you can access the people-api and it's swagger here:
+And you can access the people-api and it's swagger here: 
 ```
 http://localhost:9081/people-service/people
 http://localhost:9081/people-service/swagger-ui.html
