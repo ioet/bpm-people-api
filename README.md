@@ -5,6 +5,28 @@
 [![Build Status](https://travis-ci.org/ioet/bpm-people-api.svg?branch=master)](https://travis-ci.org/ioet/bpm-people-api)
 [![Code Coverage](https://codecov.io/gh/ioet/bpm-people-api/branch/master/graph/badge.svg)](https://codecov.io/gh/ioet/bpm-people-api)
 
+## Run it locally
+
+First run this to start eureka and edge server
+```
+docker-compose up
+```
+Then start the people-api using your IDE or this command
+```
+./gradlew bootRun
+```
+
+You will be able to see the people-api service registered in eureka here:
+```
+http://localhost:8761/
+```
+
+And you can access the people-api and it's swagger here: 
+```
+http://localhost:9081/people-service/people
+http://localhost:9081/people-service/swagger-ui.html
+```
+
 ## Swagger
 
 Swagger is integrated and available in this URL:
