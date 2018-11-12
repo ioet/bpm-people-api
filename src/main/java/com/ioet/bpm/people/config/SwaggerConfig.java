@@ -33,9 +33,8 @@ public class SwaggerConfig {
     private ApiInfo metaData() {
         return new ApiInfoBuilder()
                 .title("BPM People API")
-                .description("API with CRUD methods for the bpm-people-project")
+                .description("Manage people in bpm-people-project")
                 .version("0.0.1")
                 .build();
     }
-
 }

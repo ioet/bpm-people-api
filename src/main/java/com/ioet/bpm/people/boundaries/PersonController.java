@@ -28,7 +28,7 @@ public class PersonController {
 
     @ApiOperation(value = "Return a list of all persons", response = Person.class, responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved all persons")
+            @ApiResponse(code = 200, message = "Persons successfully returned")
     })
     @GetMapping(produces = "application/json")
     public ResponseEntity<Iterable> getAllPersons() {
@@ -36,9 +36,9 @@ public class PersonController {
         return new ResponseEntity<>(persons, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Return one persons", response = Person.class)
+    @ApiOperation(value = "Return one person", response = Person.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved the person")
+            @ApiResponse(code = 200, message = "Person successfully returned")
     })
     @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<Person> getPerson(@PathVariable(value = "id") String personId) {
@@ -48,9 +48,9 @@ public class PersonController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @ApiOperation(value = "Return the created person", response = Person.class)
+    @ApiOperation(value = "Create a new person", response = Person.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successfully created the person")
+            @ApiResponse(code = 201, message = "Person successfully created")
     })
     @PostMapping(produces = "application/json")
     public ResponseEntity<Person> createPerson(@RequestBody Person person) {
@@ -62,7 +62,7 @@ public class PersonController {
 
     @ApiOperation(value = "Delete a person")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Successfully deleted the person"),
+            @ApiResponse(code = 204, message = "Person successfully deleted"),
             @ApiResponse(code = 404, message = "The person to delete was not found")
     })
     @DeleteMapping(path = "/{id}", produces = "application/json")
@@ -75,9 +75,9 @@ public class PersonController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @ApiOperation(value = "Return the updated person", response = Person.class)
+    @ApiOperation(value = "Update a person", response = Person.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated the person"),
+            @ApiResponse(code = 200, message = "Person successfully updated"),
             @ApiResponse(code = 404, message = "The person to update was not found")
     })
     @PutMapping(path = "/{id}", produces = "application/json")
@@ -94,10 +94,10 @@ public class PersonController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @ApiOperation(value = "Return the updated person", response = Person.class)
+    @ApiOperation(value = "Change the password of one person", response = Person.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated the persons password"),
-            @ApiResponse(code = 404, message = "The person to update was not found")
+            @ApiResponse(code = 200, message = "Persons password successfully updated"),
+            @ApiResponse(code = 404, message = "The person to change the password was not found")
     })
     @PostMapping(path = "/change-password/{id}", produces = "application/json")
     public ResponseEntity<Person> changePassword(@PathVariable(value = "id") String personId,
