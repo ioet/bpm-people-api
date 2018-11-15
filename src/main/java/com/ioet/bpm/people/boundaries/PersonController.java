@@ -3,6 +3,10 @@ package com.ioet.bpm.people.boundaries;
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,20 +19,28 @@ import java.util.Optional;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/people")
+@Api(value="/people", description="Manage People", produces ="application/json")
 public class PersonController {
 
     private final PersonRepository personRepository;
 
     private PasswordManagementService passwordManagementService;
 
-
-    @GetMapping
+    @ApiOperation(value = "Return a list of all persons", response = Person.class, responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Persons successfully returned")
+    })
+    @GetMapping(produces = "application/json")
     public ResponseEntity<Iterable> getAllPersons() {
         Iterable<Person> persons = this.personRepository.findAll();
         return new ResponseEntity<>(persons, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @ApiOperation(value = "Return one person", response = Person.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Person successfully returned")
+    })
+    @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<Person> getPerson(@PathVariable(value = "id") String personId) {
         Optional<Person> personOptional = personRepository.findById(personId);
         return personOptional.map(
@@ -36,7 +48,11 @@ public class PersonController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping
+    @ApiOperation(value = "Create a new person", response = Person.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Person successfully created")
+    })
+    @PostMapping(produces = "application/json")
     public ResponseEntity<Person> createPerson(@RequestBody Person person) {
 
         person.setPassword(passwordManagementService.generatePassword(person.getPassword()));
@@ -44,7 +60,12 @@ public class PersonController {
         return new ResponseEntity<>(personCreated, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
+    @ApiOperation(value = "Delete a person")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Person successfully deleted"),
+            @ApiResponse(code = 404, message = "The person to delete was not found")
+    })
+    @DeleteMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<Person> deletePerson(@PathVariable(value = "id") String personId) {
         Optional<Person> person = personRepository.findById(personId);
         if (person.isPresent()) {
@@ -54,7 +75,12 @@ public class PersonController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/{id}")
+    @ApiOperation(value = "Update a person", response = Person.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Person successfully updated"),
+            @ApiResponse(code = 404, message = "The person to update was not found")
+    })
+    @PutMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<Person> updatePerson(@PathVariable(value = "id") String personId,
                                                @Valid @RequestBody Person personToUpdate) {
 
@@ -68,7 +94,12 @@ public class PersonController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/change-password/{id}")
+    @ApiOperation(value = "Change the password of one person", response = Person.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Persons password successfully updated"),
+            @ApiResponse(code = 404, message = "The person to change the password was not found")
+    })
+    @PostMapping(path = "/change-password/{id}", produces = "application/json")
     public ResponseEntity<Person> changePassword(@PathVariable(value = "id") String personId,
                                                  @Valid @RequestBody Person personToUpdate) {
 
