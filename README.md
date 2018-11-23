@@ -7,7 +7,16 @@
 
 ## Run it locally
 
-First run this to start eureka and edge server
+First run this to start eureka and edge server. Make sure you have an AWS account and you have exported your credentials in the environment:
+
+```
+export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY"
+export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"
+export AWS_REGION="us-east-1"
+```
+
+Then you will be able to pull the docker images using the following command:
+
 ```
 docker-compose up
 ```
@@ -36,7 +45,14 @@ http://IP_ADDRESS:PORT/swagger-ui.html
 ```
 
 ## Postman
-There is a Postman Collection included to test the api.  
+There is a Postman Collection included to test the api.
+
+Install Newman in your machine
+
+```
+$ npm install -g newman
+```
+  
 You can run it with newman with this command:
 ```
 newman run postman/collection.json -e postman/env.json
