@@ -1,0 +1,332 @@
+{
+	"info": {
+		"_postman_id": "5fa6c880-d2c9-4a00-9dda-085913303253",
+		"name": "Test People API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Person",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "39a5e9bf-2f8f-470b-a7cb-575ea9e446a0",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.test(\"Testing Data\", function () {",
+							"    pm.expect(jsonData.name).to.eql(\"erika\");",
+							"    pm.expect(jsonData.password).to.not.eql(\"erika232\");",
+							"});",
+							"",
+							"pm.globals.set(\"person_id\", jsonData.id);",
+							"pm.globals.set(\"password\", jsonData.password);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "80a00c57-357a-400d-8dcc-caa3ef016acf",
+						"exec": [
+							"var service_url = pm.environment.get(\"BPM_PEOPLE_URL\");",
+							"var url = service_url || \"localhost:8081\";",
+							"pm.globals.set(\"url\", url);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"authentication_identity\": \"epaltas@ioet.com\",\n  \"name\": \"erika\",\n  \"password\": \"erika232\"\n}\n"
+				},
+				"url": {
+					"raw": "{{url}}/people",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"people"
+					]
+				},
+				"description": "Test the API to check the API health."
+			},
+			"response": []
+		},
+		{
+			"name": "Update Person",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1a14fe89-345c-4c22-a38a-5db7dffdec23",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Test email address\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.authentication_identity).to.eql( \"alexander@ioet.com\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"authentication_identity\": \"alexander@ioet.com\",\n  \"name\": \"erika\"\n}\n"
+				},
+				"url": {
+					"raw": "{{url}}/people/{{person_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"people",
+						"{{person_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get person",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "65bec8ed-78e2-45d2-b19c-17233ee74b05",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Check person information\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.authentication_identity).to.eql(\"alexander@ioet.com\");",
+							"    pm.expect(jsonData.name).to.eql(\"erika\");",
+							"    pm.expect(jsonData.id).to.eql(pm.globals.get(\"person_id\"));",
+							"    pm.expect(jsonData).to.have.property(\"created\");",
+							"    pm.expect(jsonData).to.have.property(\"updated\");",
+							"    pm.expect(jsonData).to.have.property(\"password\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/people/{{person_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"people",
+						"{{person_id}}"
+					]
+				},
+				"description": "Check person information"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "32eef9ba-dbe1-4168-800f-dfe31a9ce225",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Update password\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.password).to.not.eql(pm.globals.get(\"password\"));",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"authentication_identity\": \"epaltas@ioet.com\",\n  \"name\": \"erika\",\n  \"password\": \"erika236\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/people/change-password/{{person_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"people",
+						"change-password",
+						"{{person_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all persons",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9326c282-53c0-4415-8150-2d8512f92d0a",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verify the person exist\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    let exist=false;  ",
+							"    ",
+							"    for(let i=0; i<jsonData.length; i++){",
+							"        if(jsonData[i].id===pm.globals.get(\"person_id\")){",
+							"            exist=true;",
+							"            break;",
+							"        }    ",
+							"    }",
+							"    ",
+							"    pm.expect(exist).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/people/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"people",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete person",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "01e14a24-6ea6-4bb6-bd7d-b0157bb59e71",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/people/{{person_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"people",
+						"{{person_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "63e61a2f-35f1-4fe0-bcb0-b2b1e95c3498",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "11330b30-f613-4edf-b46a-49decdef2c32",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
