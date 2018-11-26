@@ -53,8 +53,12 @@ public class PersonController {
             @ApiResponse(code = 201, message = "Person successfully created")
     })
     @PostMapping(produces = "application/json")
-    public ResponseEntity<Person> createPerson(@RequestBody Person person) {
-
+    public ResponseEntity<?> createPerson(@RequestBody Person person) {
+        Optional<Person> personWithGivenAuthenticationIdentity
+                = personRepository.findPersonByAuthenticationIdentity(person.getAuthenticationIdentity());
+        if (personWithGivenAuthenticationIdentity.isPresent()) {
+            return new ResponseEntity<>("This email is already in use.", HttpStatus.CONFLICT);
+        }
         person.setPassword(passwordManagementService.generatePassword(person.getPassword()));
         Person personCreated = personRepository.save(person);
         return new ResponseEntity<>(personCreated, HttpStatus.CREATED);
