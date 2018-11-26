@@ -151,12 +151,36 @@ public class PeopleControllerTest {
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
         when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
+        when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
+        when(personToUpdate.getAuthenticationIdentity()).thenReturn("test@ioet.com");
 
-        ResponseEntity<Person> updatedPersonResponse = personController.updatePerson(idPersonToUpdate, personToUpdate);
+        ResponseEntity<Person> updatedPersonResponse = (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
 
         assertEquals(personUpdated, updatedPersonResponse.getBody());
         assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());
         verify(personRepository, times(1)).save(personToUpdate);
+    }
+
+    @Test
+    public void whenAPersonIsUpdatedWithAnEmailThatAlreadyExistsAnErrorMessageIsReturned() {
+        Person personUpdated = mock(Person.class);
+        Optional<Person> personFound = Optional.of(mock(Person.class));
+
+        String idPersonToUpdate = "id";
+        Person personToUpdate = mock(Person.class);
+        String alreadyUsedAuthenticationIdentity = "other@ioet.com";
+        Person personWithTheSameAuthenticationIdentity = mock(Person.class);
+
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
+        when(personRepository.findPersonByAuthenticationIdentity(alreadyUsedAuthenticationIdentity))
+                .thenReturn(Optional.of(personWithTheSameAuthenticationIdentity));
+        when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
+        when(personToUpdate.getAuthenticationIdentity()).thenReturn(alreadyUsedAuthenticationIdentity);
+
+        ResponseEntity<Person> updatedPersonResponse = (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
+
+        assertEquals(HttpStatus.CONFLICT, updatedPersonResponse.getStatusCode());
+        verify(personRepository, never()).save(any());
     }
 
     @Test

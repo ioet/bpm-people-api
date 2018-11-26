@@ -54,10 +54,8 @@ public class PersonController {
     })
     @PostMapping(produces = "application/json")
     public ResponseEntity<?> createPerson(@RequestBody Person person) {
-        Optional<Person> personWithGivenAuthenticationIdentity
-                = personRepository.findPersonByAuthenticationIdentity(person.getAuthenticationIdentity());
-        if (personWithGivenAuthenticationIdentity.isPresent()) {
-            return new ResponseEntity<>("This email is already in use.", HttpStatus.CONFLICT);
+        if (authenticationIdentityExists(person.getAuthenticationIdentity())) {
+            return authenticationIdentityExistsAlready();
         }
         person.setPassword(passwordManagementService.generatePassword(person.getPassword()));
         Person personCreated = personRepository.save(person);
@@ -85,11 +83,14 @@ public class PersonController {
             @ApiResponse(code = 404, message = "The person to update was not found")
     })
     @PutMapping(path = "/{id}", produces = "application/json")
-    public ResponseEntity<Person> updatePerson(@PathVariable(value = "id") String personId,
+    public ResponseEntity<?> updatePerson(@PathVariable(value = "id") String personId,
                                                @Valid @RequestBody Person personToUpdate) {
 
         Optional<Person> personFound = personRepository.findById(personId);
         if (personFound.isPresent()) {
+            if (emailChanged(personFound.get(), personToUpdate) && authenticationIdentityExists(personToUpdate.getAuthenticationIdentity())) {
+                return authenticationIdentityExistsAlready();
+            }
             personToUpdate.setId(personFound.get().getId());
             personToUpdate.setPassword(personFound.get().getPassword());
             Person updatedPerson = personRepository.save(personToUpdate);
@@ -119,5 +120,19 @@ public class PersonController {
             return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    private boolean authenticationIdentityExists(String authenticationIdentity) {
+        Optional<Person> personWithGivenAuthenticationIdentity
+                = personRepository.findPersonByAuthenticationIdentity(authenticationIdentity);
+        return personWithGivenAuthenticationIdentity.isPresent();
+    }
+
+    private ResponseEntity<String> authenticationIdentityExistsAlready() {
+        return new ResponseEntity<>("This email is already in use.", HttpStatus.CONFLICT);
+    }
+
+    private boolean emailChanged(Person oldPerson, Person personToUpdate) {
+        return !oldPerson.getAuthenticationIdentity().equals(personToUpdate.getAuthenticationIdentity());
     }
 }
