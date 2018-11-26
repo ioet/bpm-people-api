@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5fa6c880-d2c9-4a00-9dda-085913303253",
+		"_postman_id": "4ff442c3-d441-4ebb-8956-9b716bddb14c",
 		"name": "Test People API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -52,6 +52,60 @@
 						"name": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"authentication_identity\": \"epaltas@ioet.com\",\n  \"name\": \"erika\",\n  \"password\": \"erika232\"\n}\n"
+				},
+				"url": {
+					"raw": "{{url}}/people",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"people"
+					]
+				},
+				"description": "Test the API to check the API health."
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Person with the same email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "39a5e9bf-2f8f-470b-a7cb-575ea9e446a0",
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {",
+							"    pm.response.to.have.status(409);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "80a00c57-357a-400d-8dcc-caa3ef016acf",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {
