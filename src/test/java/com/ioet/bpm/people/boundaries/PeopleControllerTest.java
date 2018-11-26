@@ -48,15 +48,35 @@ public class PeopleControllerTest {
 
         when(personRepository.save(personToCreate)).thenReturn(personCreated);
 
-        ResponseEntity<Person> personCreatedResponse = null;
+        ResponseEntity<Person> personCreatedResponse;
 
-        personCreatedResponse = personController.createPerson(personToCreate);
+        personCreatedResponse = (ResponseEntity<Person>) personController.createPerson(personToCreate);
 
         assertEquals(personCreated, personCreatedResponse.getBody());
         assertEquals(HttpStatus.CREATED, personCreatedResponse.getStatusCode());
         verify(personRepository, times(1)).save(personToCreate);
         verify(passwordManagementService, times(1)).generatePassword(anyString());
+    }
 
+    @Test
+    public void whenAPersonIsCreatedWithAnExistingAuthenticationIdentityAnErrorMessageIsReturned() {
+        Person personCreated = mock(Person.class);
+
+        Person personToCreate = new Person();
+        personToCreate.setPassword("ioet");
+        personToCreate.setName("Test Person Name");
+        personToCreate.setAuthenticationIdentity("test@ioet.com");
+
+        when(personRepository.findPersonByAuthenticationIdentity(personToCreate.getAuthenticationIdentity()))
+                .thenReturn(Optional.of(personCreated));
+
+        ResponseEntity<String> errorMessageResponse;
+
+        errorMessageResponse = (ResponseEntity<String>) personController.createPerson(personToCreate);
+
+        assertEquals(HttpStatus.CONFLICT, errorMessageResponse.getStatusCode());
+        verify(personRepository, never()).save(any());
+        verify(passwordManagementService, never()).generatePassword(anyString());
     }
 
     @Test
@@ -131,8 +151,10 @@ public class PeopleControllerTest {
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
         when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
+        when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
+        when(personToUpdate.getAuthenticationIdentity()).thenReturn("test@ioet.com");
 
-        ResponseEntity<Person> updatedPersonResponse = personController.updatePerson(idPersonToUpdate, personToUpdate);
+        ResponseEntity<Person> updatedPersonResponse = (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
 
         assertEquals(personUpdated, updatedPersonResponse.getBody());
         assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());
@@ -140,7 +162,29 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void whenAPersonIsUpdatedTheChangePasswordIsReturned() {
+    public void whenAPersonIsUpdatedWithAnEmailThatAlreadyExistsAnErrorMessageIsReturned() {
+        Person personUpdated = mock(Person.class);
+        Optional<Person> personFound = Optional.of(mock(Person.class));
+
+        String idPersonToUpdate = "id";
+        Person personToUpdate = mock(Person.class);
+        String alreadyUsedAuthenticationIdentity = "other@ioet.com";
+        Person personWithTheSameAuthenticationIdentity = mock(Person.class);
+
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
+        when(personRepository.findPersonByAuthenticationIdentity(alreadyUsedAuthenticationIdentity))
+                .thenReturn(Optional.of(personWithTheSameAuthenticationIdentity));
+        when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
+        when(personToUpdate.getAuthenticationIdentity()).thenReturn(alreadyUsedAuthenticationIdentity);
+
+        ResponseEntity<Person> updatedPersonResponse = (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
+
+        assertEquals(HttpStatus.CONFLICT, updatedPersonResponse.getStatusCode());
+        verify(personRepository, never()).save(any());
+    }
+
+    @Test
+    public void whenAPersonsPasswordIsChaTheChangePasswordIsReturned() {
         Person personUpdated = mock(Person.class);
         Optional<Person> personFound = Optional.of(mock(Person.class));
 
