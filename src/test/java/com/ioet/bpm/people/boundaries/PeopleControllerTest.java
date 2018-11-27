@@ -150,7 +150,7 @@ public class PeopleControllerTest {
         Person personToUpdate = mock(Person.class);
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
-        when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
+        when(personRepository.save(personFound.get())).thenReturn(personUpdated);
         when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
         when(personToUpdate.getAuthenticationIdentity()).thenReturn("test@ioet.com");
 
@@ -158,7 +158,7 @@ public class PeopleControllerTest {
 
         assertEquals(personUpdated, updatedPersonResponse.getBody());
         assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());
-        verify(personRepository, times(1)).save(personToUpdate);
+        verify(personRepository, times(1)).save(personFound.get());
     }
 
     @Test
