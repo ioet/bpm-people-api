@@ -8,6 +8,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.dozer.DozerBeanMapper;
+import org.dozer.loader.api.BeanMappingBuilder;
+import org.dozer.loader.api.TypeMappingOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +22,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/people")
-@Api(value="/people", description="Manage People", produces ="application/json")
+@Api(value = "/people", description = "Manage People", produces = "application/json")
 public class PersonController {
 
     private final PersonRepository personRepository;
@@ -84,16 +87,18 @@ public class PersonController {
     })
     @PutMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<?> updatePerson(@PathVariable(value = "id") String personId,
-                                               @Valid @RequestBody Person personToUpdate) {
+                                          @Valid @RequestBody Person personToUpdate) {
 
-        Optional<Person> personFound = personRepository.findById(personId);
-        if (personFound.isPresent()) {
-            if (emailChanged(personFound.get(), personToUpdate) && authenticationIdentityExists(personToUpdate.getAuthenticationIdentity())) {
+        Optional<Person> personFoundOptional = personRepository.findById(personId);
+        if (personFoundOptional.isPresent()) {
+            if (emailChanged(personFoundOptional.get(), personToUpdate)
+                    && authenticationIdentityExists(personToUpdate.getAuthenticationIdentity())) {
                 return authenticationIdentityExistsAlready();
             }
-            personToUpdate.setId(personFound.get().getId());
-            personToUpdate.setPassword(personFound.get().getPassword());
-            Person updatedPerson = personRepository.save(personToUpdate);
+
+            mergePersonToUpdateIntoExistingPerson(personToUpdate, personFoundOptional.get());
+
+            Person updatedPerson = personRepository.save(personFoundOptional.get());
             return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -134,5 +139,17 @@ public class PersonController {
 
     private boolean emailChanged(Person oldPerson, Person personToUpdate) {
         return !oldPerson.getAuthenticationIdentity().equals(personToUpdate.getAuthenticationIdentity());
+    }
+
+    private void mergePersonToUpdateIntoExistingPerson(Person source, Person destination) {
+        DozerBeanMapper mapper = new DozerBeanMapper();
+        mapper.addMapping(new BeanMappingBuilder() {
+
+            @Override
+            protected void configure() {
+                mapping(Person.class, Person.class, TypeMappingOptions.mapNull(false));
+            }
+        });
+        mapper.map(source, destination);
     }
 }
