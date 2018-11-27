@@ -1,6 +1,7 @@
 package com.ioet.bpm.people.services;
 
 import com.ioet.bpm.people.domain.Person;
+import lombok.AllArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.api.TypeMappingOptions;
