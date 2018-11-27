@@ -3,6 +3,7 @@ package com.ioet.bpm.people.boundaries;
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
+import com.ioet.bpm.people.services.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -27,6 +28,7 @@ public class PersonController {
 
     private final PersonRepository personRepository;
 
+    private PersonService personService;
     private PasswordManagementService passwordManagementService;
 
     @ApiOperation(value = "Return a list of all persons", response = Person.class, responseContainer = "List")
@@ -96,9 +98,10 @@ public class PersonController {
                 return authenticationIdentityExistsAlready();
             }
 
-            mergePersonToUpdateIntoExistingPerson(personToUpdate, personFoundOptional.get());
+            Person personToSave =
+                    personService.mergePersonToUpdateIntoExistingPerson(personToUpdate, personFoundOptional.get());
 
-            Person updatedPerson = personRepository.save(personFoundOptional.get());
+            Person updatedPerson = personRepository.save(personToSave);
             return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -139,17 +142,5 @@ public class PersonController {
 
     private boolean emailChanged(Person oldPerson, Person personToUpdate) {
         return !oldPerson.getAuthenticationIdentity().equals(personToUpdate.getAuthenticationIdentity());
-    }
-
-    private void mergePersonToUpdateIntoExistingPerson(Person source, Person destination) {
-        DozerBeanMapper mapper = new DozerBeanMapper();
-        mapper.addMapping(new BeanMappingBuilder() {
-
-            @Override
-            protected void configure() {
-                mapping(Person.class, Person.class, TypeMappingOptions.mapNull(false));
-            }
-        });
-        mapper.map(source, destination);
     }
 }
