@@ -3,6 +3,7 @@ package com.ioet.bpm.people.boundaries;
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
+import com.ioet.bpm.people.services.PersonService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,8 @@ public class PeopleControllerTest {
 
     @Mock
     private PersonRepository personRepository;
+    @Mock
+    private PersonService personService;
     @Mock
     private PasswordManagementService passwordManagementService;
 
@@ -150,20 +153,22 @@ public class PeopleControllerTest {
         Person personToUpdate = mock(Person.class);
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
-        when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
         when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
         when(personToUpdate.getAuthenticationIdentity()).thenReturn("test@ioet.com");
+        when(personService.mergePersonToUpdateIntoExistingPerson(personToUpdate, personFound.get()))
+                .thenReturn(personFound.get());
+        when(personRepository.save(personFound.get())).thenReturn(personUpdated);
 
-        ResponseEntity<Person> updatedPersonResponse = (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
+        ResponseEntity<Person> updatedPersonResponse =
+                (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
 
         assertEquals(personUpdated, updatedPersonResponse.getBody());
         assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());
-        verify(personRepository, times(1)).save(personToUpdate);
+        verify(personRepository, times(1)).save(personFound.get());
     }
 
     @Test
     public void whenAPersonIsUpdatedWithAnEmailThatAlreadyExistsAnErrorMessageIsReturned() {
-        Person personUpdated = mock(Person.class);
         Optional<Person> personFound = Optional.of(mock(Person.class));
 
         String idPersonToUpdate = "id";
@@ -177,7 +182,8 @@ public class PeopleControllerTest {
         when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
         when(personToUpdate.getAuthenticationIdentity()).thenReturn(alreadyUsedAuthenticationIdentity);
 
-        ResponseEntity<Person> updatedPersonResponse = (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
+        ResponseEntity<Person> updatedPersonResponse =
+                (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
 
         assertEquals(HttpStatus.CONFLICT, updatedPersonResponse.getStatusCode());
         verify(personRepository, never()).save(any());
@@ -191,14 +197,16 @@ public class PeopleControllerTest {
         String idPersonToUpdate = "id";
         Person personToUpdate = new Person();
         personToUpdate.setPassword("ioet");
-        
+
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
 
-        when(passwordManagementService.generatePassword(personToUpdate.getPassword())).thenReturn(personToUpdate.getPassword());
+        when(passwordManagementService.generatePassword(personToUpdate.getPassword()))
+                .thenReturn(personToUpdate.getPassword());
 
         when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
 
-        ResponseEntity<Person> updatedPersonResponse = personController.changePassword(idPersonToUpdate, personToUpdate);
+        ResponseEntity<Person> updatedPersonResponse =
+                personController.changePassword(idPersonToUpdate, personToUpdate);
 
         assertEquals(personUpdated, updatedPersonResponse.getBody());
         assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());

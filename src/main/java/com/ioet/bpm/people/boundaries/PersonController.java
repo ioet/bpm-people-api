@@ -3,11 +3,15 @@ package com.ioet.bpm.people.boundaries;
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
+import com.ioet.bpm.people.services.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.dozer.DozerBeanMapper;
+import org.dozer.loader.api.BeanMappingBuilder;
+import org.dozer.loader.api.TypeMappingOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +23,12 @@ import java.util.Optional;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/people")
-@Api(value="/people", description="Manage People", produces ="application/json")
+@Api(value = "/people", description = "Manage People", produces = "application/json")
 public class PersonController {
 
     private final PersonRepository personRepository;
 
+    private PersonService personService;
     private PasswordManagementService passwordManagementService;
 
     @ApiOperation(value = "Return a list of all persons", response = Person.class, responseContainer = "List")
@@ -84,16 +89,19 @@ public class PersonController {
     })
     @PutMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<?> updatePerson(@PathVariable(value = "id") String personId,
-                                               @Valid @RequestBody Person personToUpdate) {
+                                          @Valid @RequestBody Person personToUpdate) {
 
-        Optional<Person> personFound = personRepository.findById(personId);
-        if (personFound.isPresent()) {
-            if (emailChanged(personFound.get(), personToUpdate) && authenticationIdentityExists(personToUpdate.getAuthenticationIdentity())) {
+        Optional<Person> personFoundOptional = personRepository.findById(personId);
+        if (personFoundOptional.isPresent()) {
+            if (emailChanged(personFoundOptional.get(), personToUpdate)
+                    && authenticationIdentityExists(personToUpdate.getAuthenticationIdentity())) {
                 return authenticationIdentityExistsAlready();
             }
-            personToUpdate.setId(personFound.get().getId());
-            personToUpdate.setPassword(personFound.get().getPassword());
-            Person updatedPerson = personRepository.save(personToUpdate);
+
+            Person personToSave =
+                    personService.mergePersonToUpdateIntoExistingPerson(personToUpdate, personFoundOptional.get());
+
+            Person updatedPerson = personRepository.save(personToSave);
             return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
