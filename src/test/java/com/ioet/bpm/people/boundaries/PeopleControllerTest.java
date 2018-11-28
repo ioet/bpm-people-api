@@ -63,15 +63,13 @@ public class PeopleControllerTest {
 
     @Test
     public void whenAPersonIsCreatedWithAnExistingAuthenticationIdentityAnErrorMessageIsReturned() {
-        Person personCreated = mock(Person.class);
-
         Person personToCreate = new Person();
         personToCreate.setPassword("ioet");
         personToCreate.setName("Test Person Name");
         personToCreate.setAuthenticationIdentity("test@ioet.com");
 
-        when(personRepository.findPersonByAuthenticationIdentity(personToCreate.getAuthenticationIdentity()))
-                .thenReturn(Optional.of(personCreated));
+        when(personService.authenticationIdentityExists(personToCreate.getAuthenticationIdentity()))
+                .thenReturn(true);
 
         ResponseEntity<String> errorMessageResponse;
 
@@ -153,8 +151,6 @@ public class PeopleControllerTest {
         Person personToUpdate = mock(Person.class);
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
-        when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
-        when(personToUpdate.getAuthenticationIdentity()).thenReturn("test@ioet.com");
         when(personService.mergePersonToUpdateIntoExistingPerson(personToUpdate, personFound.get()))
                 .thenReturn(personFound.get());
         when(personRepository.save(personFound.get())).thenReturn(personUpdated);
@@ -173,14 +169,12 @@ public class PeopleControllerTest {
 
         String idPersonToUpdate = "id";
         Person personToUpdate = mock(Person.class);
-        String alreadyUsedAuthenticationIdentity = "other@ioet.com";
-        Person personWithTheSameAuthenticationIdentity = mock(Person.class);
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
-        when(personRepository.findPersonByAuthenticationIdentity(alreadyUsedAuthenticationIdentity))
-                .thenReturn(Optional.of(personWithTheSameAuthenticationIdentity));
-        when(personFound.get().getAuthenticationIdentity()).thenReturn("test@ioet.com");
-        when(personToUpdate.getAuthenticationIdentity()).thenReturn(alreadyUsedAuthenticationIdentity);
+        when(personService.emailChanged(any(), any())).thenReturn(true);
+
+        when(personService.authenticationIdentityExists(personToUpdate.getAuthenticationIdentity()))
+                .thenReturn(true);
 
         ResponseEntity<Person> updatedPersonResponse =
                 (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
