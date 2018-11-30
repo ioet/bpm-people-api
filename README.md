@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.org/ioet/bpm-people-api.svg?branch=master)](https://travis-ci.org/ioet/bpm-people-api)
 [![Code Coverage](https://codecov.io/gh/ioet/bpm-people-api/branch/master/graph/badge.svg)](https://codecov.io/gh/ioet/bpm-people-api)
+[![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=ioet_bpm-people-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=ioet_bpm-people-api)
 
 ## Run it locally
 

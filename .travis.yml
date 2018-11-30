@@ -11,8 +11,18 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+env:
+  global:
+    - SONAR_HOST_URL=https://sonarcloud.io
+    - GITHUB_API_URL=https://api.github.com
+    - PROJECT_KEY=ioet_bpm-people-api
+    - ORGANIZATION=ioet
+    - secure: R6cSl4b9QBM990ReJB9KU9gWqHKTER9gk/f2fdoCkaa3cg4Q4kp8LzrsXGsUY0qAskWTr00sDOpdHLv1yQfloAOZVAA6kX3SuEC+Xu3N6dd+j3ozBxVx+RUCednHpkhfG4TPotvHmBpTDCRiN7mKMxAm2gg+Vu36OvroKeBzRyRPdi+5GB3OThzdulhfQvQtg7xsFCdajERxbABy3uaBpt6gOdAXfLOM1bgvReIwssIZI2zTvFjnVoZ95MrSIRzAHrzIrzlAcaonY4iTgAfWaGs/3A3ToXTybycNrn3f/RWeMFHOjFkUJ07RYhV5opeYij3lUy6FpVH6eULrOW2nOnUK03UaVXaSn/EYXykecB/7Pi3r2TzrSHvEK8DQuxTC03PqUg4Uo/GnN6DCpdBOb5LC6SSIfHvq2SPMybHxJBNb4Rh/yjQJ3ZCRbR61kQr5eza7tpMWfaOQ9B+iR66EYyPLiiZe8igbW1rsycahournuXiwicnumr2uwesbSL+40/xxWlofvyAnDce+yfp1XfBmnl63Gl7u8w12sDOPDbWoY20BPkfsx596KXRuGxKBosb4PPnY//vNbSUB7iHb0X8IOEe8WHDgkm0HCTsC3CIdLpJd3i0SQBQXVESz4C9+pWqrGadCjHSl7pAlEBacm8xMpFDXJ3dj35b8TmqOfBo=
+addons:
+  sonarcloud:
 after_success:
  - bash <(curl -s https://codecov.io/bash)
+ - ./gradlew sonarqube -Dsonar.projectKey=$PROJECT_KEY -Dsonar.organization=$ORGANIZATION -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_GITHUB_TOKEN
  - pip install --user awscli
  - eval $(aws ecr get-login --no-include-email --region us-east-1)
  - docker build -t bpm-people-api:$TRAVIS_BUILD_ID . --build-arg JAR_FILE=build/libs/bpm-people-api-0.0.1.jar
