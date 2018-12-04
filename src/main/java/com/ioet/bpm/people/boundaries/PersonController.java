@@ -58,7 +58,7 @@ public class PersonController {
             @ApiResponse(code = 201, message = "Person successfully created")
     })
     @PostMapping(produces = "application/json")
-    public ResponseEntity<?> createPerson(@RequestBody Person person) {
+    public ResponseEntity<?> createPerson(@Valid @RequestBody Person person) {
         if (personService.authenticationIdentityExists(person.getAuthenticationIdentity())) {
             return new ResponseEntity<>("This email is already in use.", HttpStatus.CONFLICT);
         }
