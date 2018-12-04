@@ -50,4 +50,10 @@ public class PersonServiceTest {
         Person personToUpdate = Person.builder().authenticationIdentity("new@ioet.com").build();
         assertTrue(personService.emailChanged(oldPerson, personToUpdate));
     }
+
+    @Test
+    public void authenticationProviderIsInitialized() {
+        Person person = Person.builder().authenticationProvider("ioet.com").build();
+        assertEquals("ioet.com", person.getAuthenticationProvider());
+    }
 }
