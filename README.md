@@ -32,7 +32,7 @@ Then start the people-api using your IDE or the following command. This should a
 
 If you have run `docker-compose up`, you will be able to see the people-api service registered in eureka here:
 ```
-http://localhost:8761/
+http://localhost:8081/
 ```
 
 And you can directly access the people-api and it's swagger here: 
