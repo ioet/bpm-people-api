@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6984bd27-9528-4ed5-be67-64268bdb787e",
+		"_postman_id": "89558634-6f38-4792-bf5f-2eebba5f3d83",
 		"name": "Test People API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -21,6 +21,7 @@
 							"pm.test(\"Testing Data\", function () {",
 							"    pm.expect(jsonData.name).to.eql(\"Aaron Castañeda\");",
 							"    pm.expect(jsonData.password).to.not.eql(\"aaron123\");",
+							"    pm.expect(jsonData.authentication_provider).to.eql(\"ioet.com\")",
 							"});",
 							"",
 							"pm.globals.set(\"person_id_1\", jsonData.id);",
@@ -62,8 +63,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"erika\",\n  \"password\": \"erika232\"\n}\n"
-					"raw": "{\n  \"authentication_identity\": \"acastaneda@ioet.com\",\n  \"name\": \"Aaron Castañeda\",\n  \"password\": \"aaron123\"\n}\n"
+					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"Aaron Castañeda\",\n  \"password\": \"aaron123\"\n}\n"
 				},
 				"url": {
 					"raw": "{{url}}/people",
@@ -149,7 +149,7 @@
 							"",
 							"pm.test(\"Test email address\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.authentication_identity).to.eql( \"aaronc@ioet.com\");",
+							"    pm.expect(jsonData.authentication_identity).to.eql(pm.globals.get(\"random_email_1\"));",
 							"    pm.expect(jsonData.name).to.eql(\"updated name\");",
 							"});",
 							""
@@ -170,7 +170,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"updated name\"\n}\n"
+					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"updated name\",\n  \"authentication_provider\": \"other-company.com\"\n}\n"
 				},
 				"url": {
 					"raw": "{{url}}/people/{{person_id_1}}",
@@ -314,6 +314,8 @@
 							"    pm.expect(jsonData).to.have.property(\"created\");",
 							"    pm.expect(jsonData).to.have.property(\"updated\");",
 							"    pm.expect(jsonData).to.not.have.property(\"password\");",
+							"    pm.expect(jsonData).to.have.property(\"authentication_provider\");",
+							"    pm.expect(jsonData.authentication_provider).to.eql(\"other-company.com\");",
 							"});"
 						],
 						"type": "text/javascript"
