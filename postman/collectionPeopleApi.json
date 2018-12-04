@@ -21,6 +21,7 @@
 							"pm.test(\"Testing Data\", function () {",
 							"    pm.expect(jsonData.name).to.eql(\"Aaron Castañeda\");",
 							"    pm.expect(jsonData.password).to.not.eql(\"aaron123\");",
+                            "    pm.expect(jsonData.authentication_provider).to.eql(\"ioet.com\")",
 							"});",
 							"",
 							"pm.globals.set(\"person_id_1\", jsonData.id);",
@@ -170,7 +171,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"updated name\"\n}\n"
+					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"updated name\"\n  \"authentication_provider\": \"other-company.com\"\n}\n"
 				},
 				"url": {
 					"raw": "{{url}}/people/{{person_id_1}}",
@@ -314,6 +315,8 @@
 							"    pm.expect(jsonData).to.have.property(\"created\");",
 							"    pm.expect(jsonData).to.have.property(\"updated\");",
 							"    pm.expect(jsonData).to.not.have.property(\"password\");",
+							"    pm.expect(jsonData).to.have.property(\"authentication_provider\");",
+							"    pm.expect(jsonData.authentication_provider).to.eql(\"other-company.com\");",
 							"});"
 						],
 						"type": "text/javascript"
