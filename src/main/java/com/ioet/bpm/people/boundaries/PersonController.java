@@ -61,6 +61,8 @@ public class PersonController {
         if (personService.authenticationIdentityExists(person.getAuthenticationIdentity())) {
             return new ResponseEntity<>("This email is already in use.", HttpStatus.CONFLICT);
         }
+        // TODO: Remove hardcoded initialization of authenticationProvider here
+        person.setAuthenticationProvider("ioet.com");
         person.setPassword(passwordManagementService.encryptPassword(person.getPassword()));
         Person personCreated = personRepository.save(person);
         return new ResponseEntity<>(personCreated, HttpStatus.CREATED);
