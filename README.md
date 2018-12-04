@@ -33,8 +33,8 @@ http://localhost:8761/
 
 And you can access the people-api and it's swagger here: 
 ```
-http://localhost:9081/people-service/people
-http://localhost:9081/people-service/swagger-ui.html
+http://localhost:8081/people
+http://localhost:8081/swagger-ui.html
 ```
 
 ## Swagger
@@ -42,7 +42,7 @@ http://localhost:9081/people-service/swagger-ui.html
 Swagger is integrated and available in this URL:
 
 ```
-http://IP_ADDRESS:PORT/swagger-ui.html
+http://localhost:8081/swagger-ui.html
 ```
 
 ## Postman
@@ -51,7 +51,7 @@ There is a Postman Collection included to test the api.
 Install Newman in your machine
 
 ```
-$ npm install -g newman
+npm install -g newman
 ```
   
 You can run it with newman with this command:
@@ -74,7 +74,7 @@ For any other environment the credentials should be provided by the CI server.
 
 ## Dynamo
 
-In order to make the API works and establish a connection with Dynamo (Cloud DB provided by AWS) you'll need to export the following environment variables:
+In order to make the API work and establish a connection with Dynamo (Cloud DB provided by AWS) you'll need to export the following environment variables:
 
 ```
 export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY"
