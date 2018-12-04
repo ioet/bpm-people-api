@@ -15,19 +15,23 @@ export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"
 export AWS_REGION="us-east-1"
 ```
 
+You should write them into the bashrc-file as well, so that they are loaded each time you open a terminal.
+```
+vim ~/.bashrc
+```
 Then you will be able to pull the docker images using the following command:
 
 ```
 docker-compose up
 ```
-Then start the people-api using your IDE or this command
+Then start the people-api using your IDE or the following command. This should also work if `docker-compose up` failed.
 ```
 ./gradlew bootRun
 ```
 
 You will be able to see the people-api service registered in eureka here:
 ```
-http://localhost:8761/
+http://localhost:8081/
 ```
 
 And you can access the people-api and it's swagger here: 
@@ -47,13 +51,13 @@ http://localhost:8081/swagger-ui.html
 ## Postman
 There is a Postman Collection included to test the api.
 
-Install Newman in your machine
+To run it from the command line install Newman in your machine.
 
 ```
 npm install -g newman
 ```
   
-You can run it with newman with this command:
+You can use Newman to run it with this command:
 ```
 newman run postman/collection.json -e postman/env.json
 ```
@@ -112,6 +116,6 @@ Setting the environment variables
 Run or Debug
 
 ```
-Now, you can run or debug the app from IntelliJ, you can use JRbel to debug and redeploy the app.
+Now, you can run or debug the app from the IntelliJ terminal. You can use JRbel to debug and redeploy the app.
 ```
 
