@@ -29,12 +29,17 @@ Then start the people-api using your IDE or the following command. This should a
 ./gradlew bootRun
 ```
 
-You will be able to see the people-api service registered in eureka here:
+If you have run `docker-compose up`, you will be able to see the people-api service registered in eureka here:
 ```
-http://localhost:8081/
+http://localhost:8761/
 ```
 
-And you can access the people-api and it's swagger here: 
+And you can directly access the people-api and it's swagger here: 
+```
+http://localhost:8081/people
+http://localhost:8081/swagger-ui.html
+```
+For accessing both via the edge server use:
 ```
 http://localhost:8081/people
 http://localhost:8081/swagger-ui.html
@@ -45,7 +50,7 @@ http://localhost:8081/swagger-ui.html
 Swagger is integrated and available in this URL:
 
 ```
-http://localhost:8081/swagger-ui.html
+http://IP_ADRESS:PORT/swagger-ui.html
 ```
 
 ## Postman
