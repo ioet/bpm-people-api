@@ -19,8 +19,8 @@
 							"",
 							"var jsonData = pm.response.json();",
 							"pm.test(\"Testing Data\", function () {",
-							"    pm.expect(jsonData.name).to.eql(\"erika\");",
-							"    pm.expect(jsonData.password).to.not.eql(\"erika232\");",
+							"    pm.expect(jsonData.name).to.eql(\"Aaron Castañeda\");",
+							"    pm.expect(jsonData.password).to.not.eql(\"aaron123\");",
 							"});",
 							"",
 							"pm.globals.set(\"person_id\", jsonData.id);",
@@ -50,13 +50,13 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"epaltas@ioet.com\",\n  \"name\": \"erika\",\n  \"password\": \"erika232\"\n}\n"
+					"raw": "{\n  \"authentication_identity\": \"acastaneda@ioet.com\",\n  \"name\": \"Aaron Castañeda\",\n  \"password\": \"aaron123\"\n}\n"
 				},
 				"url": {
 					"raw": "{{url}}/people",
@@ -85,7 +85,7 @@
 							"",
 							"pm.test(\"Test email address\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.authentication_identity).to.eql( \"alexander@ioet.com\");",
+							"    pm.expect(jsonData.authentication_identity).to.eql( \"aaronc@ioet.com\");",
 							"});",
 							""
 						],
@@ -99,13 +99,13 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"alexander@ioet.com\",\n  \"name\": \"erika\"\n}\n"
+					"raw": "{\n  \"authentication_identity\": \"aaronc@ioet.com\",\n  \"name\": \"Aaron Castañeda\"\n}\n"
 				},
 				"url": {
 					"raw": "{{url}}/people/{{person_id}}",
@@ -133,13 +133,14 @@
 							"});",
 							"pm.test(\"Check person information\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.authentication_identity).to.eql(\"alexander@ioet.com\");",
-							"    pm.expect(jsonData.name).to.eql(\"erika\");",
+							"    pm.expect(jsonData.authentication_identity).to.eql(\"aaronc@ioet.com\");",
+							"    pm.expect(jsonData.name).to.eql(\"Aaron Castañeda\");",
 							"    pm.expect(jsonData.id).to.eql(pm.globals.get(\"person_id\"));",
 							"    pm.expect(jsonData).to.have.property(\"created\");",
 							"    pm.expect(jsonData).to.have.property(\"updated\");",
 							"    pm.expect(jsonData).to.have.property(\"password\");",
-							"});"
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -183,7 +184,7 @@
 							"    pm.expect(jsonData.password).to.not.eql(pm.globals.get(\"password\"));",
 							"});",
 							"",
-							""
+							" "
 						],
 						"type": "text/javascript"
 					}
@@ -195,23 +196,23 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"epaltas@ioet.com\",\n  \"name\": \"erika\",\n  \"password\": \"erika236\"\n}"
+					"raw": "{\n \"new_password\": \"aaron456\",\n  \"new_password_confirmation\": \"aaron456\",\n  \"old_password\": \"aaron123\"\n}"
 				},
 				"url": {
-					"raw": "{{url}}/people/change-password/{{person_id}}",
+					"raw": "{{url}}/people/{{person_id}}/change-password",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"people",
-						"change-password",
-						"{{person_id}}"
+						"{{person_id}}",
+						"change-password"
 					]
 				}
 			},
@@ -242,7 +243,8 @@
 							"    }",
 							"    ",
 							"    pm.expect(exist).to.eql(true);",
-							"});"
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}

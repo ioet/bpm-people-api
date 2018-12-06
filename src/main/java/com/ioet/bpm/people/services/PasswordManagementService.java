@@ -2,6 +2,7 @@ package com.ioet.bpm.people.services;
 
 import com.ioet.bpm.people.domain.PasswordHistory;
 import com.ioet.bpm.people.domain.Person;
+import com.ioet.bpm.people.domain.UpdatePassword;
 import com.ioet.bpm.people.repositories.PasswordHistoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,8 @@ public class PasswordManagementService {
     private static final int SALT_SIZE = 64;
 
     private final PasswordHistoryRepository passwordHistoryRepository;
+
+
 
     public String generatePassword(String password) {
         byte[] salt = generateSalt();
@@ -81,4 +84,18 @@ public class PasswordManagementService {
         PasswordHistory passwordHistory = createPasswordHistory(person);
         passwordHistoryRepository.save(passwordHistory);
     }
+
+    public boolean providedPasswordIsCorrect(Person personUpdate, UpdatePassword updatePassword){
+        String saltPart = personUpdate.getPassword().split(":")[0];
+        String hashPart = personUpdate.getPassword().split(":")[1];
+        byte[] salt = Base64.getDecoder().decode(saltPart);
+        byte[] hash = Base64.getDecoder().decode(hashPart);
+
+        boolean correct = verifyPassword(hash, updatePassword.getOldPassword(), salt);
+
+        return correct&&updatePassword.getNewPassword().equals(updatePassword.getNewPasswordConfirmation());
+
+    }
+
+
 }

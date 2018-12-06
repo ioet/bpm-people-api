@@ -1,6 +1,7 @@
 package com.ioet.bpm.people.boundaries;
 
 import com.ioet.bpm.people.domain.Person;
+import com.ioet.bpm.people.domain.UpdatePassword;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
 import org.junit.Test;
@@ -13,8 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -142,27 +142,52 @@ public class PeopleControllerTest {
     @Test
     public void whenAPersonIsUpdatedTheChangePasswordIsReturned() {
         Person personUpdated = mock(Person.class);
-        Optional<Person> personFound = Optional.of(mock(Person.class));
+        UpdatePassword updatePassword = mock(UpdatePassword.class);
 
         String idPersonToUpdate = "id";
         Person personToUpdate = new Person();
+        UpdatePassword updatePass = new UpdatePassword();
         personToUpdate.setPassword("ioet");
-        
-        when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
 
-        when(passwordManagementService.generatePassword(personToUpdate.getPassword())).thenReturn(personToUpdate.getPassword());
-
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(personToUpdate));
+        when(passwordManagementService.providedPasswordIsCorrect(personToUpdate, updatePassword)).thenReturn(true);
+        when(passwordManagementService.generatePassword(updatePass.getNewPassword())).thenReturn(updatePass.getNewPassword());
         when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
 
-        ResponseEntity<Person> updatedPersonResponse = personController.changePassword(idPersonToUpdate, personToUpdate);
+        ResponseEntity<Person> updatedPersonResponse = personController.changePassword(idPersonToUpdate, updatePassword);
 
         assertEquals(personUpdated, updatedPersonResponse.getBody());
         assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());
 
         verify(personRepository, times(1)).save(personToUpdate);
-        verify(passwordManagementService, times(1)).generatePassword(personToUpdate.getPassword());
-        verify(passwordManagementService, times(1)).recordPasswordHistory(personToUpdate);
-
+        verify(passwordManagementService, times(1)).generatePassword(updatePass.getNewPassword());
     }
 
+    @Test
+    public void whenNewPasswordAndNewPasswordConfirmationNotTheSame() {
+        UpdatePassword updatePassword = mock(UpdatePassword.class);
+
+        String idPersonToUpdate = "id";
+        Person personToUpdate = new Person();
+        personToUpdate.setPassword("ioet");
+
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(personToUpdate));
+        when(passwordManagementService.providedPasswordIsCorrect(personToUpdate, updatePassword)).thenReturn(false);
+
+        ResponseEntity<Person> updatedPersonResponse = personController.changePassword(idPersonToUpdate, updatePassword);
+
+        assertEquals(HttpStatus.BAD_REQUEST, updatedPersonResponse.getStatusCode());
+    }
+
+    @Test
+    public void ifThePersonDoesNotFoundReturn404(){
+        UpdatePassword updatePassword = mock(UpdatePassword.class);
+        String idPersonToUpdate = "id";
+
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.empty());
+
+        ResponseEntity<Person> updatedPersonResponse = personController.changePassword(idPersonToUpdate, updatePassword);
+
+        assertEquals(HttpStatus.NOT_FOUND, updatedPersonResponse.getStatusCode());
+    }
 }

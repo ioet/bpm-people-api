@@ -1,5 +1,8 @@
 package com.ioet.bpm.people.services;
 
+import com.ioet.bpm.people.domain.Person;
+import com.ioet.bpm.people.domain.UpdatePassword;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -9,9 +12,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Base64;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PasswordManagementServiceTest {
+public class UpdatePasswordManagementServiceTest {
     @Mock
     public PasswordManagementService passwordManagementService;
 
@@ -54,4 +58,20 @@ public class PasswordManagementServiceTest {
         assertEquals(verify, true);
 
     }
-}
+
+    @Test
+    public void providedPasswordIsCorrectTest(){
+       UpdatePassword updatePassword = new UpdatePassword();
+
+       String encrypt = "su5WnNHKHjZLJwmcIniJOmrEV2QsDsZrS/VJAoB4JH51vKyqf57zsTqr3BcfWc6Hj7QfGv8b3jy9M9N/aRlphw==:Vy047jiAneXBIvWsDyFtSGQ4Kh6bEggTglQ7vBxenoK8YdEDEMYKof7MDU7rjpOD6/Cgr5cp60iT1XFYn9qZgQ==";
+       String saltPart = encrypt.split(":")[0];
+       String hashPart = encrypt.split(":")[1];
+       byte[] salt = Base64.getDecoder().decode(saltPart);
+       byte[] hash = Base64.getDecoder().decode(hashPart);
+       String password = "ioet";
+
+       Boolean correct = passwordManagementServiceMock.verifyPassword(hash, password, salt);
+       assertEquals(correct, true);
+       assertEquals(updatePassword.getNewPassword(),updatePassword.getNewPasswordConfirmation());
+    }
+  }
