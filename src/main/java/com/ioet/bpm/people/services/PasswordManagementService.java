@@ -60,7 +60,7 @@ public class PasswordManagementService {
         return salt;
     }
 
-    public boolean verifyPassword(byte[] originalHash, String password, byte[] salt) {
+    public boolean verifyPassword(String password, byte[] originalHash, byte[] salt) {
         byte[] comparisonHash = calculateHash(password, salt);
         return comparePasswords(originalHash, comparisonHash);
     }
@@ -91,7 +91,8 @@ public class PasswordManagementService {
         byte[] salt = Base64.getDecoder().decode(saltPart);
         byte[] hash = Base64.getDecoder().decode(hashPart);
 
-        boolean correct = verifyPassword(hash, updatePassword.getOldPassword(), salt);
+        String oldPasswordProvided = updatePassword.getOldPassword();
+        boolean correct = verifyPassword(oldPasswordProvided, hash, salt);
 
         return correct&&updatePassword.getNewPassword().equals(updatePassword.getNewPasswordConfirmation());
 

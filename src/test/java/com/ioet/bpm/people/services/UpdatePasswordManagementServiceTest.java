@@ -31,7 +31,7 @@ public class UpdatePasswordManagementServiceTest {
         byte[] hash = Base64.getDecoder().decode(hashPart);
         String password = "ioet";
 
-        Boolean correct = passwordManagementServiceMock.verifyPassword(hash, password, salt);
+        Boolean correct = passwordManagementServiceMock.verifyPassword(password, hash, salt);
         assertEquals(correct, true);
         assertEquals(salt.length, new byte[64].length);
 
@@ -70,7 +70,7 @@ public class UpdatePasswordManagementServiceTest {
        byte[] hash = Base64.getDecoder().decode(hashPart);
        String password = "ioet";
 
-       Boolean correct = passwordManagementServiceMock.verifyPassword(hash, password, salt);
+       Boolean correct = passwordManagementServiceMock.verifyPassword(password, hash, salt);
        assertEquals(correct, true);
        assertEquals(updatePassword.getNewPassword(),updatePassword.getNewPasswordConfirmation());
     }
