@@ -4,8 +4,10 @@ import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.domain.UpdatePassword;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
+import com.ioet.bpm.people.services.PersonService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -22,6 +24,8 @@ public class PeopleControllerTest {
 
     @Mock
     private PersonRepository personRepository;
+    @Mock
+    private PersonService personService;
     @Mock
     private PasswordManagementService passwordManagementService;
 
@@ -48,15 +52,33 @@ public class PeopleControllerTest {
 
         when(personRepository.save(personToCreate)).thenReturn(personCreated);
 
-        ResponseEntity<Person> personCreatedResponse = null;
+        ResponseEntity<Person> personCreatedResponse;
 
-        personCreatedResponse = personController.createPerson(personToCreate);
+        personCreatedResponse = (ResponseEntity<Person>) personController.createPerson(personToCreate);
 
         assertEquals(personCreated, personCreatedResponse.getBody());
         assertEquals(HttpStatus.CREATED, personCreatedResponse.getStatusCode());
         verify(personRepository, times(1)).save(personToCreate);
-        verify(passwordManagementService, times(1)).generatePassword(anyString());
+        verify(passwordManagementService, times(1)).encryptPassword(anyString());
+    }
 
+    @Test
+    public void whenAPersonIsCreatedWithAnExistingAuthenticationIdentityAnErrorMessageIsReturned() {
+        Person personToCreate = new Person();
+        personToCreate.setPassword("ioet");
+        personToCreate.setName("Test Person Name");
+        personToCreate.setAuthenticationIdentity("test@ioet.com");
+
+        when(personService.authenticationIdentityExists(personToCreate.getAuthenticationIdentity()))
+                .thenReturn(true);
+
+        ResponseEntity<String> errorMessageResponse;
+
+        errorMessageResponse = (ResponseEntity<String>) personController.createPerson(personToCreate);
+
+        assertEquals(HttpStatus.CONFLICT, errorMessageResponse.getStatusCode());
+        verify(personRepository, never()).save(any());
+        verify(passwordManagementService, never()).encryptPassword(anyString());
     }
 
     @Test
@@ -130,37 +152,100 @@ public class PeopleControllerTest {
         Person personToUpdate = mock(Person.class);
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
-        when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
+        when(personService.mergePersonToUpdateIntoExistingPerson(personToUpdate, personFound.get()))
+                .thenReturn(personFound.get());
+        when(personRepository.save(personFound.get())).thenReturn(personUpdated);
 
-        ResponseEntity<Person> updatedPersonResponse = personController.updatePerson(idPersonToUpdate, personToUpdate);
+        ResponseEntity<Person> updatedPersonResponse =
+                (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
 
         assertEquals(personUpdated, updatedPersonResponse.getBody());
         assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());
-        verify(personRepository, times(1)).save(personToUpdate);
+        verify(personRepository, times(1)).save(personFound.get());
     }
 
     @Test
-    public void whenAPersonIsUpdatedTheChangePasswordIsReturned() {
-        Person personUpdated = mock(Person.class);
-        UpdatePassword updatePassword = mock(UpdatePassword.class);
+    public void whenAPersonIsUpdatedWithAnEmailThatAlreadyExistsAnErrorMessageIsReturned() {
+        Optional<Person> personFound = Optional.of(mock(Person.class));
 
+        String idPersonToUpdate = "id";
+        Person personToUpdate = mock(Person.class);
+
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(personFound);
+        when(personService.emailChanged(any(), any())).thenReturn(true);
+
+        when(personService.authenticationIdentityExists(personToUpdate.getAuthenticationIdentity()))
+                .thenReturn(true);
+
+        ResponseEntity<Person> updatedPersonResponse =
+                (ResponseEntity<Person>) personController.updatePerson(idPersonToUpdate, personToUpdate);
+
+        assertEquals(HttpStatus.CONFLICT, updatedPersonResponse.getStatusCode());
+        verify(personRepository, never()).save(any());
+    }
+
+
+    @Test
+    public void whenThePasswordIsChangeThePersonWithTheEncryptedPasswordIsSaved() {
         String idPersonToUpdate = "id";
         Person personToUpdate = new Person();
         UpdatePassword updatePass = new UpdatePassword();
         personToUpdate.setPassword("ioet");
-
         when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(personToUpdate));
-        when(passwordManagementService.providedPasswordIsCorrect(personToUpdate, updatePassword)).thenReturn(true);
-        when(passwordManagementService.generatePassword(updatePass.getNewPassword())).thenReturn(updatePass.getNewPassword());
-        when(personRepository.save(personToUpdate)).thenReturn(personUpdated);
+        when(passwordManagementService.isProvidedPasswordCorrect(personToUpdate, updatePass)).thenReturn(true);
+        String encryptedPassword = "acds";
+        when(passwordManagementService.encryptPassword(updatePass.getNewPassword())).thenReturn(encryptedPassword);
 
-        ResponseEntity<Person> updatedPersonResponse = personController.changePassword(idPersonToUpdate, updatePassword);
 
-        assertEquals(personUpdated, updatedPersonResponse.getBody());
-        assertEquals(HttpStatus.OK, updatedPersonResponse.getStatusCode());
+        personController.changePassword(idPersonToUpdate, updatePass);
 
-        verify(personRepository, times(1)).save(personToUpdate);
-        verify(passwordManagementService, times(1)).generatePassword(updatePass.getNewPassword());
+
+        ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
+        verify(personRepository).save(personCaptor.capture());
+        assertEquals(encryptedPassword, personCaptor.getValue().getPassword());
+    }
+
+    @Test
+    public void whenThePasswordIsChangedThenTheRecordPasswordHistoryIsCalled(){
+        String idPersonToUpdate = "id";
+        Person personToUpdate = new Person();
+        UpdatePassword updatePass = new UpdatePassword();
+        personToUpdate.setPassword("ioet");
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(personToUpdate));
+        when(passwordManagementService.isProvidedPasswordCorrect(personToUpdate, updatePass)).thenReturn(true);
+
+        personController.changePassword(idPersonToUpdate, updatePass);
+
+        verify(passwordManagementService).recordPasswordHistory(personToUpdate);
+    }
+
+    @Test
+    public void whenAPasswordIsChangedThenA200IsReturned() {
+        String idPersonToUpdate = "id";
+        Person personToUpdate = new Person();
+        UpdatePassword updatePass = new UpdatePassword();
+        personToUpdate.setPassword("ioet");
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(personToUpdate));
+        when(passwordManagementService.isProvidedPasswordCorrect(personToUpdate, updatePass)).thenReturn(true);
+
+        ResponseEntity response = personController.changePassword(idPersonToUpdate, updatePass);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void whenThePasswordIsChangedThenTheServiceEncryptsTheProvidedPassword() {
+        String idPersonToUpdate = "id";
+        Person personToUpdate = new Person();
+        UpdatePassword updatePass = new UpdatePassword();
+        personToUpdate.setPassword("ioet");
+        when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(personToUpdate));
+        when(passwordManagementService.isProvidedPasswordCorrect(personToUpdate, updatePass)).thenReturn(true);
+
+        personController.changePassword(idPersonToUpdate, updatePass);
+
+        verify(passwordManagementService).encryptPassword(updatePass.getNewPassword());
+
     }
 
     @Test
@@ -168,11 +253,11 @@ public class PeopleControllerTest {
         UpdatePassword updatePassword = mock(UpdatePassword.class);
 
         String idPersonToUpdate = "id";
-        Person personToUpdate = new Person();
-        personToUpdate.setPassword("ioet");
+        Person personToUpdate = mock(Person.class);
+        when(personToUpdate.getPassword()).thenReturn("ioet");
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(personToUpdate));
-        when(passwordManagementService.providedPasswordIsCorrect(personToUpdate, updatePassword)).thenReturn(false);
+        when(passwordManagementService.isProvidedPasswordCorrect(personToUpdate, updatePassword)).thenReturn(false);
 
         ResponseEntity<Person> updatedPersonResponse = personController.changePassword(idPersonToUpdate, updatePassword);
 
@@ -180,7 +265,7 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void ifThePersonDoesNotFoundReturn404(){
+    public void ifThePersonDoesNotFoundReturn404() {
         UpdatePassword updatePassword = mock(UpdatePassword.class);
         String idPersonToUpdate = "id";
 

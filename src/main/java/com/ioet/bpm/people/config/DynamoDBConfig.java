@@ -48,7 +48,6 @@ public class DynamoDBConfig {
             List<Class> modelClasses = new ArrayList<>();
             modelClasses.add(Person.class);
             modelClasses.add(PasswordHistory.class);
-            modelClasses.add(UpdatePassword.class);
 
             for (Class cls : modelClasses) {
                 log.info("Creating DynamoDB table for " + cls.getSimpleName());

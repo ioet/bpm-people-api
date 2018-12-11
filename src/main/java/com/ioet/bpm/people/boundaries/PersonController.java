@@ -4,6 +4,7 @@ import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.domain.UpdatePassword;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
+import com.ioet.bpm.people.services.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -20,10 +21,13 @@ import java.util.Optional;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/people")
-@Api(value="/people", description="Manage People", produces ="application/json")
+@Api(value = "/people", description = "Manage People", produces = "application/json")
 public class PersonController {
 
     private final PersonRepository personRepository;
+
+    private PersonService personService;
+
     private PasswordManagementService passwordManagementService;
 
     @ApiOperation(value = "Return a list of all persons", response = Person.class, responseContainer = "List")
@@ -53,9 +57,11 @@ public class PersonController {
             @ApiResponse(code = 201, message = "Person successfully created")
     })
     @PostMapping(produces = "application/json")
-    public ResponseEntity<Person> createPerson(@RequestBody Person person) {
-
-        person.setPassword(passwordManagementService.generatePassword(person.getPassword()));
+    public ResponseEntity<?> createPerson(@RequestBody Person person) {
+        if (personService.authenticationIdentityExists(person.getAuthenticationIdentity())) {
+            return new ResponseEntity<>("This email is already in use.", HttpStatus.CONFLICT);
+        }
+        person.setPassword(passwordManagementService.encryptPassword(person.getPassword()));
         Person personCreated = personRepository.save(person);
         return new ResponseEntity<>(personCreated, HttpStatus.CREATED);
     }
@@ -81,14 +87,20 @@ public class PersonController {
             @ApiResponse(code = 404, message = "The person to update was not found")
     })
     @PutMapping(path = "/{id}", produces = "application/json")
-    public ResponseEntity<Person> updatePerson(@PathVariable(value = "id") String personId,
-                                               @Valid @RequestBody Person personToUpdate) {
+    public ResponseEntity<?> updatePerson(@PathVariable(value = "id") String personId,
+                                          @Valid @RequestBody Person personToUpdate) {
 
-        Optional<Person> personFound = personRepository.findById(personId);
-        if (personFound.isPresent()) {
-            personToUpdate.setId(personFound.get().getId());
-            personToUpdate.setPassword(personFound.get().getPassword());
-            Person updatedPerson = personRepository.save(personToUpdate);
+        Optional<Person> personFoundOptional = personRepository.findById(personId);
+        if (personFoundOptional.isPresent()) {
+            if (personService.emailChanged(personFoundOptional.get(), personToUpdate)
+                    && personService.authenticationIdentityExists(personToUpdate.getAuthenticationIdentity())) {
+                return new ResponseEntity<>("This email is already in use.", HttpStatus.CONFLICT);
+            }
+
+            Person personToSave =
+                    personService.mergePersonToUpdateIntoExistingPerson(personToUpdate, personFoundOptional.get());
+
+            Person updatedPerson = personRepository.save(personToSave);
             return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -106,17 +118,17 @@ public class PersonController {
         Optional<Person> personFound = personRepository.findById(personId);
 
         if (personFound.isPresent()) {
-            Person personUpdate = personFound.get();
+            Person personToUpdate = personFound.get();
 
-            if(passwordManagementService.providedPasswordIsCorrect(personUpdate,updatePassword)){
-                personUpdate.setPassword(passwordManagementService.generatePassword(updatePassword.getNewPassword()));
-                Person update = personRepository.save(personUpdate);
-                passwordManagementService.recordPasswordHistory(personUpdate);
-                return  new ResponseEntity<>(update,HttpStatus.OK);
+            if(passwordManagementService.isProvidedPasswordCorrect(personToUpdate,updatePassword)){
+                personToUpdate.setPassword(passwordManagementService.encryptPassword(updatePassword.getNewPassword()));
+                personRepository.save(personToUpdate);
+                passwordManagementService.recordPasswordHistory(personToUpdate);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-}
 
+}

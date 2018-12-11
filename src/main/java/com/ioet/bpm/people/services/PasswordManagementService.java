@@ -27,7 +27,7 @@ public class PasswordManagementService {
 
 
 
-    public String generatePassword(String password) {
+    public String encryptPassword(String password) {
         byte[] salt = generateSalt();
         byte[] hash = calculateHash(password, salt);
         return Base64.getEncoder().encodeToString(salt).concat(":").concat(Base64.getEncoder().encodeToString(hash));
@@ -85,7 +85,7 @@ public class PasswordManagementService {
         passwordHistoryRepository.save(passwordHistory);
     }
 
-    public boolean providedPasswordIsCorrect(Person personUpdate, UpdatePassword updatePassword){
+    public boolean isProvidedPasswordCorrect(Person personUpdate, UpdatePassword updatePassword){
         String saltPart = personUpdate.getPassword().split(":")[0];
         String hashPart = personUpdate.getPassword().split(":")[1];
         byte[] salt = Base64.getDecoder().decode(saltPart);
