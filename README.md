@@ -7,7 +7,7 @@
 
 ## Run it locally
 
-First run this to start eureka and edge server. Make sure you have an AWS account and you have exported your credentials in the environment:
+Make sure you have an AWS account and you have exported your credentials in the environment:
 
 ```
 export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY"
