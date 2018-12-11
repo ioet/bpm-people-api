@@ -34,7 +34,7 @@ public class PasswordManagementService {
     }
 
 
-    public byte[] calculateHash(String password, byte[] salt) {
+    byte[] calculateHash(String password, byte[] salt) {
         byte[] hash = new byte[64];
         try {
             MessageDigest md = MessageDigest.getInstance(ALGORITHM);
@@ -53,19 +53,19 @@ public class PasswordManagementService {
         return hash;
     }
 
-    public byte[] generateSalt() {
+    byte[] generateSalt() {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[SALT_SIZE];
         random.nextBytes(salt);
         return salt;
     }
 
-    public boolean verifyPassword(String password, byte[] originalHash, byte[] salt) {
+    boolean verifyPassword(String password, byte[] originalHash, byte[] salt) {
         byte[] comparisonHash = calculateHash(password, salt);
         return comparePasswords(originalHash, comparisonHash);
     }
 
-    public boolean comparePasswords(byte[] originalHash, byte[] comparisonHash) {
+    boolean comparePasswords(byte[] originalHash, byte[] comparisonHash) {
         int diff = originalHash.length ^ comparisonHash.length;
         for (int i = 0; i < originalHash.length && i < comparisonHash.length; i++) {
             diff |= originalHash[i] ^ comparisonHash[i];
@@ -73,7 +73,7 @@ public class PasswordManagementService {
         return diff == 0;
     }
 
-    public PasswordHistory createPasswordHistory(Person person) {
+    private PasswordHistory createPasswordHistory(Person person) {
         PasswordHistory passwordHistory = new PasswordHistory();
         passwordHistory.setPersonId(person.getId());
         passwordHistory.setPassword(person.getPassword());
@@ -94,9 +94,6 @@ public class PasswordManagementService {
         String oldPasswordProvided = updatePassword.getOldPassword();
         boolean correct = verifyPassword(oldPasswordProvided, hash, salt);
 
-        return correct&&updatePassword.getNewPassword().equals(updatePassword.getNewPasswordConfirmation());
-
+        return correct && updatePassword.getNewPassword().equals(updatePassword.getNewPasswordConfirmation());
     }
-
-
 }
