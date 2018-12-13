@@ -254,7 +254,6 @@ public class PeopleControllerTest {
 
         String idPersonToUpdate = "id";
         Person personToUpdate = mock(Person.class);
-        when(personToUpdate.getPassword()).thenReturn("ioet");
 
         when(personRepository.findById(idPersonToUpdate)).thenReturn(Optional.of(personToUpdate));
         when(passwordManagementService.isProvidedPasswordCorrect(personToUpdate, updatePassword)).thenReturn(false);
