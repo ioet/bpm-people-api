@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.org/ioet/bpm-people-api.svg?branch=master)](https://travis-ci.org/ioet/bpm-people-api)
 [![Code Coverage](https://codecov.io/gh/ioet/bpm-people-api/branch/master/graph/badge.svg)](https://codecov.io/gh/ioet/bpm-people-api)
+[![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=ioet_bpm-people-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=ioet_bpm-people-api)
 
 ## Run it locally
 
@@ -113,5 +114,13 @@ Run or Debug
 
 ```
 Now, you can run or debug the app from IntelliJ, you can use JRbel to debug and redeploy the app.
+```
+
+## Examining Code Quality locally precommit
+
+Included in this repository is a tool (shell script) for examining the code as is in your current branch without requiring a commit first. To use this tool, you will need to create a GitHub token with which SonarCloud can integrate with GitHub on your behalf. To create said token, navegate to https://sonarcloud.io/account/security (log in as necessary with your GitHub account that is tied to this repository), enter a token name and click on the Generate button. A string will be displayed, which you should copy and store as your token (this string will never be displayed again, so be sure to save it in a safe place). Now you are ready to execute (in a Bash compatible shell):
+
+```bash
+SONAR_GITHUB_TOKEN=<my personal token created above> ./sonarcloud_analyze.sh
 ```
 

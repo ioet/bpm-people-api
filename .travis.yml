@@ -11,8 +11,12 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+addons:
+  sonarcloud:
+    organization: 'ioet'
 after_success:
  - bash <(curl -s https://codecov.io/bash)
+ - sonar-scanner
  - pip install --user awscli
  - eval $(aws ecr get-login --no-include-email --region us-east-1)
  - docker build -t bpm-people-api:$TRAVIS_BUILD_ID . --build-arg JAR_FILE=build/libs/bpm-people-api-0.0.1.jar
