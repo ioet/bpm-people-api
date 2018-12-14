@@ -1,13 +1,10 @@
 package com.ioet.bpm.people.services;
 
-import com.ioet.bpm.people.domain.PasswordHistory;
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.domain.UpdatePassword;
-import com.ioet.bpm.people.repositories.PasswordHistoryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Base64;
@@ -15,14 +12,10 @@ import java.util.Base64;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PasswordManagementServiceTest {
-
-    @Mock
-    private PasswordHistoryRepository passwordHistoryRepository;
 
     @InjectMocks
     public PasswordManagementService passwordManagementService;
