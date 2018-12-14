@@ -112,17 +112,17 @@ public class PersonController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Persons password successfully updated"),
             @ApiResponse(code = 404, message = "The person to change the password was not found"),
-            @ApiResponse(code = 400, message =  "The new password and confirmation are not the same")
+            @ApiResponse(code = 400, message = "The new password and confirmation are not the same")
     })
-    @PostMapping(path = "/{id}/change-password",produces = "application/json")
-    public ResponseEntity<Person> changePassword(@PathVariable(value = "id")String personId,
+    @PostMapping(path = "/{id}/change-password", produces = "application/json")
+    public ResponseEntity<Person> changePassword(@PathVariable(value = "id") String personId,
                                                  @Valid @RequestBody UpdatePassword updatePassword) {
         Optional<Person> personFound = personRepository.findById(personId);
 
         if (personFound.isPresent()) {
             Person personToUpdate = personFound.get();
 
-            if(passwordManagementService.isProvidedPasswordCorrect(personToUpdate,updatePassword)){
+            if (passwordManagementService.isProvidedPasswordCorrect(personToUpdate, updatePassword)) {
                 personToUpdate.setPassword(passwordManagementService.encryptPassword(updatePassword.getNewPassword()));
                 personRepository.save(personToUpdate);
                 passwordManagementService.recordPasswordHistory(personToUpdate);
