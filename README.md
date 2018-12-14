@@ -42,8 +42,8 @@ http://localhost:8081/swagger-ui.html
 ```
 For accessing both via the edge server use:
 ```
-http://localhost:8081/people
-http://localhost:8081/swagger-ui.html
+http://localhost:9081/people
+http://localhost:9081/swagger-ui.html
 ```
 
 ## Swagger
