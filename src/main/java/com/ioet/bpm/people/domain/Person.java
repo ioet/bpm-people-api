@@ -38,4 +38,3 @@ public class Person extends AuditLog {
     @DynamoDBAttribute
     private String password;
 }
-
