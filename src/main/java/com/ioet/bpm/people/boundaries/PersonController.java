@@ -1,6 +1,7 @@
 package com.ioet.bpm.people.boundaries;
 
 import com.ioet.bpm.people.domain.Person;
+import com.ioet.bpm.people.domain.UpdatePassword;
 import com.ioet.bpm.people.repositories.PersonRepository;
 import com.ioet.bpm.people.services.PasswordManagementService;
 import com.ioet.bpm.people.services.PersonService;
@@ -9,9 +10,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
-import org.dozer.DozerBeanMapper;
-import org.dozer.loader.api.BeanMappingBuilder;
-import org.dozer.loader.api.TypeMappingOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +27,7 @@ public class PersonController {
     private final PersonRepository personRepository;
 
     private PersonService personService;
+
     private PasswordManagementService passwordManagementService;
 
     @ApiOperation(value = "Return a list of all persons", response = Person.class, responseContainer = "List")
@@ -62,7 +61,7 @@ public class PersonController {
         if (personService.authenticationIdentityExists(person.getAuthenticationIdentity())) {
             return new ResponseEntity<>("This email is already in use.", HttpStatus.CONFLICT);
         }
-        person.setPassword(passwordManagementService.generatePassword(person.getPassword()));
+        person.setPassword(passwordManagementService.encryptPassword(person.getPassword()));
         Person personCreated = personRepository.save(person);
         return new ResponseEntity<>(personCreated, HttpStatus.CREATED);
     }
@@ -110,23 +109,26 @@ public class PersonController {
     @ApiOperation(value = "Change the password of one person", response = Person.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Persons password successfully updated"),
-            @ApiResponse(code = 404, message = "The person to change the password was not found")
+            @ApiResponse(code = 404, message = "The person to change the password was not found"),
+            @ApiResponse(code = 400, message =  "The new password and confirmation are not the same")
     })
-    @PostMapping(path = "/change-password/{id}", produces = "application/json")
-    public ResponseEntity<Person> changePassword(@PathVariable(value = "id") String personId,
-                                                 @Valid @RequestBody Person personToUpdate) {
-
+    @PostMapping(path = "/{id}/change-password",produces = "application/json")
+    public ResponseEntity<Person> changePassword(@PathVariable(value = "id")String personId,
+                                                 @Valid @RequestBody UpdatePassword updatePassword) {
         Optional<Person> personFound = personRepository.findById(personId);
+
         if (personFound.isPresent()) {
+            Person personToUpdate = personFound.get();
 
-            personToUpdate.setId(personFound.get().getId());
-            personToUpdate.setPassword(passwordManagementService.generatePassword(personToUpdate.getPassword()));
-            Person updatedPerson = personRepository.save(personToUpdate);
-
-            passwordManagementService.recordPasswordHistory(personToUpdate);
-
-            return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
+            if(passwordManagementService.isProvidedPasswordCorrect(personToUpdate,updatePassword)){
+                personToUpdate.setPassword(passwordManagementService.encryptPassword(updatePassword.getNewPassword()));
+                personRepository.save(personToUpdate);
+                passwordManagementService.recordPasswordHistory(personToUpdate);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
 }

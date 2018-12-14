@@ -19,8 +19,8 @@
 							"",
 							"var jsonData = pm.response.json();",
 							"pm.test(\"Testing Data\", function () {",
-							"    pm.expect(jsonData.name).to.eql(\"erika\");",
-							"    pm.expect(jsonData.password).to.not.eql(\"erika232\");",
+							"    pm.expect(jsonData.name).to.eql(\"Aaron Castañeda\");",
+							"    pm.expect(jsonData.password).to.not.eql(\"aaron123\");",
 							"});",
 							"",
 							"pm.globals.set(\"person_id_1\", jsonData.id);",
@@ -56,13 +56,14 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"erika\",\n  \"password\": \"erika232\"\n}\n"
+					"raw": "{\n  \"authentication_identity\": \"acastaneda@ioet.com\",\n  \"name\": \"Aaron Castañeda\",\n  \"password\": \"aaron123\"\n}\n"
 				},
 				"url": {
 					"raw": "{{url}}/people",
@@ -148,6 +149,7 @@
 							"",
 							"pm.test(\"Test email address\", function () {",
 							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.authentication_identity).to.eql( \"aaronc@ioet.com\");",
 							"    pm.expect(jsonData.name).to.eql(\"updated name\");",
 							"});",
 							""
@@ -162,8 +164,8 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {
@@ -356,7 +358,7 @@
 							"    pm.expect(jsonData.password).to.not.eql(pm.globals.get(\"password\"));",
 							"});",
 							"",
-							""
+							" "
 						],
 						"type": "text/javascript"
 					}
@@ -368,8 +370,8 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {

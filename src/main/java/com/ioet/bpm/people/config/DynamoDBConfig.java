@@ -10,6 +10,7 @@ import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.ioet.bpm.people.domain.PasswordHistory;
 import com.ioet.bpm.people.domain.Person;
+import com.ioet.bpm.people.domain.UpdatePassword;
 import lombok.extern.slf4j.Slf4j;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
 import org.springframework.beans.factory.InitializingBean;
