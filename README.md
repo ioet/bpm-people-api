@@ -51,7 +51,7 @@ http://localhost:9081/people-service/swagger-ui.html
 Swagger is integrated and available in this URL:
 
 ```
-http://IP_ADDRESS:PORT/swagger-ui.html
+http://IP_ADRESS:PORT/swagger-ui.html
 ```
 
 ## Postman

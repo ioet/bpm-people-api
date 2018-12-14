@@ -36,9 +36,6 @@ public class Person extends AuditLog {
     private String authenticationProvider;
 
     @DynamoDBAttribute
-    private String authenticationProvider;
-
-    @DynamoDBAttribute
     private String password;
 }
 
