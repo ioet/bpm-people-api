@@ -207,7 +207,7 @@ public class PeopleControllerTest {
     }
 
     @Test
-    public void whenAPasswordIsChangedThenA200IsReturned() {
+    public void whenAPasswordIsChangedThenA204IsReturned() {
         String idPersonToUpdate = "id";
         Person personToUpdate = new Person();
         UpdatePassword updatePass = new UpdatePassword();
@@ -217,7 +217,7 @@ public class PeopleControllerTest {
 
         ResponseEntity response = personController.changePassword(idPersonToUpdate, updatePass);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
