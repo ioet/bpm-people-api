@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "89558634-6f38-4792-bf5f-2eebba5f3d83",
+    "_postman_id": "f722c091-c0f3-4f08-ab06-0ba28d43069f",
     "name": "Test People API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -351,14 +351,10 @@
           "script": {
             "id": "32eef9ba-dbe1-4168-800f-dfe31a9ce225",
             "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
+              "pm.test(\"Status code is 204\", function () {",
+              "    pm.response.to.have.status(204);",
               "});",
               "",
-              "pm.test(\"Update password\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData.password).to.not.eql(pm.globals.get(\"password\"));",
-              "});",
               "",
               " "
             ],
@@ -378,17 +374,17 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"erika\",\n  \"password\": \"erika236\"\n}"
+          "raw": "{\n  \"new_password\": \"aaron789\",\n  \"new_password_confirmation\": \"aaron789\",\n  \"old_password\": \"aaron123\"\n}"
         },
         "url": {
-          "raw": "{{url}}/people/change-password/{{person_id_1}}",
+          "raw": "{{url}}/people/{{person_id_1}}/change-password",
           "host": [
             "{{url}}"
           ],
           "path": [
             "people",
-            "change-password",
-            "{{person_id_1}}"
+            "{{person_id_1}}",
+            "change-password"
           ]
         }
       },

@@ -126,7 +126,7 @@ public class PersonController {
                 personToUpdate.setPassword(passwordManagementService.encryptPassword(updatePassword.getNewPassword()));
                 personRepository.save(personToUpdate);
                 passwordManagementService.recordPasswordHistory(personToUpdate);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
