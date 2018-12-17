@@ -1,545 +1,547 @@
 {
-	"info": {
-		"_postman_id": "6984bd27-9528-4ed5-be67-64268bdb787e",
-		"name": "Test People API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Create Person",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "39a5e9bf-2f8f-470b-a7cb-575ea9e446a0",
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {",
-							"    pm.response.to.have.status(201);",
-							"});",
-							"",
-							"var jsonData = pm.response.json();",
-							"pm.test(\"Testing Data\", function () {",
-							"    pm.expect(jsonData.name).to.eql(\"Aaron Castañeda\");",
-							"    pm.expect(jsonData.password).to.not.eql(\"aaron123\");",
-							"});",
-							"",
-							"pm.globals.set(\"person_id_1\", jsonData.id);",
-							"pm.globals.set(\"password\", jsonData.password);",
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "80a00c57-357a-400d-8dcc-caa3ef016acf",
-						"exec": [
-							"var service_url = pm.environment.get(\"BPM_PEOPLE_URL\");",
-							"var url = service_url || \"localhost:8081\";",
-							"pm.globals.set(\"url\", url);",
-							"",
-							"",
-							"let randomEmail1 = Math.random().toString(36).substring(2, 12) + '@ioet.com';",
-							"let randomEmail2 = Math.random().toString(36).substring(2, 12) + '@ioet.com';",
-							"pm.globals.set(\"random_email_1\", randomEmail1);",
-							"pm.globals.set(\"random_email_2\", randomEmail2);",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"erika\",\n  \"password\": \"erika232\"\n}\n"
-					"raw": "{\n  \"authentication_identity\": \"acastaneda@ioet.com\",\n  \"name\": \"Aaron Castañeda\",\n  \"password\": \"aaron123\"\n}\n"
-				},
-				"url": {
-					"raw": "{{url}}/people",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people"
-					]
-				},
-				"description": "Test the API to check the API health."
-			},
-			"response": []
-		},
-		{
-			"name": "Create a Person with the same email",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "39a5e9bf-2f8f-470b-a7cb-575ea9e446a0",
-						"exec": [
-							"pm.test(\"Status code is 409\", function () {",
-							"    pm.response.to.have.status(409);",
-							"});",
-							"",
-							"pm.test(\"Body matches string\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"This email is already in use.\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "80a00c57-357a-400d-8dcc-caa3ef016acf",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"erika\",\n  \"password\": \"erika232\"\n}\n"
-				},
-				"url": {
-					"raw": "{{url}}/people",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people"
-					]
-				},
-				"description": "Test the API to check the API health."
-			},
-			"response": []
-		},
-		{
-			"name": "Update person",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "1a14fe89-345c-4c22-a38a-5db7dffdec23",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Test email address\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.authentication_identity).to.eql( \"aaronc@ioet.com\");",
-							"    pm.expect(jsonData.name).to.eql(\"updated name\");",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"updated name\"\n}\n"
-				},
-				"url": {
-					"raw": "{{url}}/people/{{person_id_1}}",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people",
-						"{{person_id_1}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create a second person",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "39a5e9bf-2f8f-470b-a7cb-575ea9e446a0",
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {",
-							"    pm.response.to.have.status(201);",
-							"});",
-							"",
-							"var jsonData = pm.response.json();",
-							"pm.test(\"Testing Data\", function () {",
-							"    pm.expect(jsonData.name).to.eql(\"test\");",
-							"    pm.expect(jsonData.password).to.not.eql(\"test123\");",
-							"});",
-							"",
-							"pm.globals.set(\"person_id_2\", jsonData.id);",
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "80a00c57-357a-400d-8dcc-caa3ef016acf",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_2}}\",\n  \"name\": \"test\",\n  \"password\": \"test123\"\n}\n"
-				},
-				"url": {
-					"raw": "{{url}}/people",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people"
-					]
-				},
-				"description": "Test the API to check the API health."
-			},
-			"response": []
-		},
-		{
-			"name": "Update person with already existing email",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "1a14fe89-345c-4c22-a38a-5db7dffdec23",
-						"exec": [
-							"pm.test(\"Status code is 409\", function () {",
-							"    pm.response.to.have.status(409);",
-							"});",
-							"",
-							"pm.test(\"Body matches string\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"This email is already in use.\");",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"updated name\"\n}\n"
-				},
-				"url": {
-					"raw": "{{url}}/people/{{person_id_2}}",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people",
-						"{{person_id_2}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get person",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "65bec8ed-78e2-45d2-b19c-17233ee74b05",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"pm.test(\"Check person information\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.authentication_identity).to.eql(pm.globals.get(\"random_email_1\"));",
-							"    pm.expect(jsonData.name).to.eql(\"updated name\");",
-							"    pm.expect(jsonData.id).to.eql(pm.globals.get(\"person_id_1\"));",
-							"    pm.expect(jsonData).to.have.property(\"created\");",
-							"    pm.expect(jsonData).to.have.property(\"updated\");",
-							"    pm.expect(jsonData).to.not.have.property(\"password\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{url}}/people/{{person_id_1}}",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people",
-						"{{person_id_1}}"
-					]
-				},
-				"description": "Check person information"
-			},
-			"response": []
-		},
-		{
-			"name": "Update Password",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "32eef9ba-dbe1-4168-800f-dfe31a9ce225",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Update password\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.password).to.not.eql(pm.globals.get(\"password\"));",
-							"});",
-							"",
-							" "
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"erika\",\n  \"password\": \"erika236\"\n}"
-				},
-				"url": {
-					"raw": "{{url}}/people/change-password/{{person_id_1}}",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people",
-						"change-password",
-						"{{person_id_1}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get all persons",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "9326c282-53c0-4415-8150-2d8512f92d0a",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Verify the person exist\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    ",
-							"    let exist=false;  ",
-							"    ",
-							"    for(let i=0; i<jsonData.length; i++){",
-							"        if(jsonData[i].id===pm.globals.get(\"person_id_1\")){",
-							"            exist=true;",
-							"            break;",
-							"        }    ",
-							"    }",
-							"    ",
-							"    pm.expect(exist).to.eql(true);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{url}}/people/",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete person",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "01e14a24-6ea6-4bb6-bd7d-b0157bb59e71",
-						"exec": [
-							"pm.test(\"Status code is 204\", function () {",
-							"    pm.response.to.have.status(204);",
-							"});",
-							"",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{url}}/people/{{person_id_1}}",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people",
-						"{{person_id_1}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete second person",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "01e14a24-6ea6-4bb6-bd7d-b0157bb59e71",
-						"exec": [
-							"pm.test(\"Status code is 204\", function () {",
-							"    pm.response.to.have.status(204);",
-							"});",
-							"",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{url}}/people/{{person_id_2}}",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"people",
-						"{{person_id_2}}"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"id": "63e61a2f-35f1-4fe0-bcb0-b2b1e95c3498",
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"id": "11330b30-f613-4edf-b46a-49decdef2c32",
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	]
+  "info": {
+    "_postman_id": "89558634-6f38-4792-bf5f-2eebba5f3d83",
+    "name": "Test People API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Person",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "39a5e9bf-2f8f-470b-a7cb-575ea9e446a0",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Testing Data\", function () {",
+              "    pm.expect(jsonData.name).to.eql(\"Aaron Castañeda\");",
+              "    pm.expect(jsonData.password).to.not.eql(\"aaron123\");",
+              "    pm.expect(jsonData.authentication_provider).to.eql(\"ioet.com\")",
+              "});",
+              "",
+              "pm.globals.set(\"person_id_1\", jsonData.id);",
+              "pm.globals.set(\"password\", jsonData.password);",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "80a00c57-357a-400d-8dcc-caa3ef016acf",
+            "exec": [
+              "var service_url = pm.environment.get(\"BPM_PEOPLE_URL\");",
+              "var url = service_url || \"localhost:8081\";",
+              "pm.globals.set(\"url\", url);",
+              "",
+              "",
+              "let randomEmail1 = Math.random().toString(36).substring(2, 12) + '@ioet.com';",
+              "let randomEmail2 = Math.random().toString(36).substring(2, 12) + '@ioet.com';",
+              "pm.globals.set(\"random_email_1\", randomEmail1);",
+              "pm.globals.set(\"random_email_2\", randomEmail2);",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "name": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"Aaron Castañeda\",\n  \"password\": \"aaron123\"\n}\n"
+        },
+        "url": {
+          "raw": "{{url}}/people",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people"
+          ]
+        },
+        "description": "Test the API to check the API health."
+      },
+      "response": []
+    },
+    {
+      "name": "Create a Person with the same email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "39a5e9bf-2f8f-470b-a7cb-575ea9e446a0",
+            "exec": [
+              "pm.test(\"Status code is 409\", function () {",
+              "    pm.response.to.have.status(409);",
+              "});",
+              "",
+              "pm.test(\"Body matches string\", function () {",
+              "    pm.expect(pm.response.text()).to.include(\"This email is already in use.\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "80a00c57-357a-400d-8dcc-caa3ef016acf",
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "name": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"erika\",\n  \"password\": \"erika232\"\n}\n"
+        },
+        "url": {
+          "raw": "{{url}}/people",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people"
+          ]
+        },
+        "description": "Test the API to check the API health."
+      },
+      "response": []
+    },
+    {
+      "name": "Update person",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "1a14fe89-345c-4c22-a38a-5db7dffdec23",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Test email address\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.authentication_identity).to.eql(pm.globals.get(\"random_email_1\"));",
+              "    pm.expect(jsonData.name).to.eql(\"updated name\");",
+              "});",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "name": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"updated name\",\n  \"authentication_provider\": \"other-company.com\"\n}\n"
+        },
+        "url": {
+          "raw": "{{url}}/people/{{person_id_1}}",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people",
+            "{{person_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create a second person",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "39a5e9bf-2f8f-470b-a7cb-575ea9e446a0",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Testing Data\", function () {",
+              "    pm.expect(jsonData.name).to.eql(\"test\");",
+              "    pm.expect(jsonData.password).to.not.eql(\"test123\");",
+              "});",
+              "",
+              "pm.globals.set(\"person_id_2\", jsonData.id);",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "80a00c57-357a-400d-8dcc-caa3ef016acf",
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "name": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authentication_identity\": \"{{random_email_2}}\",\n  \"name\": \"test\",\n  \"password\": \"test123\"\n}\n"
+        },
+        "url": {
+          "raw": "{{url}}/people",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people"
+          ]
+        },
+        "description": "Test the API to check the API health."
+      },
+      "response": []
+    },
+    {
+      "name": "Update person with already existing email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "1a14fe89-345c-4c22-a38a-5db7dffdec23",
+            "exec": [
+              "pm.test(\"Status code is 409\", function () {",
+              "    pm.response.to.have.status(409);",
+              "});",
+              "",
+              "pm.test(\"Body matches string\", function () {",
+              "    pm.expect(pm.response.text()).to.include(\"This email is already in use.\");",
+              "});",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "name": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"updated name\"\n}\n"
+        },
+        "url": {
+          "raw": "{{url}}/people/{{person_id_2}}",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people",
+            "{{person_id_2}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get person",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "65bec8ed-78e2-45d2-b19c-17233ee74b05",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Check person information\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.authentication_identity).to.eql(pm.globals.get(\"random_email_1\"));",
+              "    pm.expect(jsonData.name).to.eql(\"updated name\");",
+              "    pm.expect(jsonData.id).to.eql(pm.globals.get(\"person_id_1\"));",
+              "    pm.expect(jsonData).to.have.property(\"created\");",
+              "    pm.expect(jsonData).to.have.property(\"updated\");",
+              "    pm.expect(jsonData).to.not.have.property(\"password\");",
+              "    pm.expect(jsonData).to.have.property(\"authentication_provider\");",
+              "    pm.expect(jsonData.authentication_provider).to.eql(\"other-company.com\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{url}}/people/{{person_id_1}}",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people",
+            "{{person_id_1}}"
+          ]
+        },
+        "description": "Check person information"
+      },
+      "response": []
+    },
+    {
+      "name": "Update Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "32eef9ba-dbe1-4168-800f-dfe31a9ce225",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Update password\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.password).to.not.eql(pm.globals.get(\"password\"));",
+              "});",
+              "",
+              " "
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "name": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authentication_identity\": \"{{random_email_1}}\",\n  \"name\": \"erika\",\n  \"password\": \"erika236\"\n}"
+        },
+        "url": {
+          "raw": "{{url}}/people/change-password/{{person_id_1}}",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people",
+            "change-password",
+            "{{person_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get all persons",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "9326c282-53c0-4415-8150-2d8512f92d0a",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Verify the person exist\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    ",
+              "    let exist=false;  ",
+              "    ",
+              "    for(let i=0; i<jsonData.length; i++){",
+              "        if(jsonData[i].id===pm.globals.get(\"person_id_1\")){",
+              "            exist=true;",
+              "            break;",
+              "        }    ",
+              "    }",
+              "    ",
+              "    pm.expect(exist).to.eql(true);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{url}}/people/",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete person",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01e14a24-6ea6-4bb6-bd7d-b0157bb59e71",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});",
+              "",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{url}}/people/{{person_id_1}}",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people",
+            "{{person_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete second person",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "01e14a24-6ea6-4bb6-bd7d-b0157bb59e71",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});",
+              "",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{url}}/people/{{person_id_2}}",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "people",
+            "{{person_id_2}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "63e61a2f-35f1-4fe0-bcb0-b2b1e95c3498",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "11330b30-f613-4edf-b46a-49decdef2c32",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
 }
