@@ -16,45 +16,46 @@ export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"
 export AWS_REGION="us-east-1"
 ```
 
+You should write them into the bashrc-file as well, so that they are loaded each time you open a terminal.
+```
+vim ~/.bashrc
+```
 Then you will be able to pull the docker images using the following command:
 
 ```
 docker-compose up
 ```
-Then start the people-api using your IDE or this command
+Then start the people-api using your IDE or the following command. This should also work if `docker-compose up` failed.
 ```
 ./gradlew bootRun
 ```
 
-You will be able to see the people-api service registered in eureka here:
+If you have run `docker-compose up`, you will be able to see the people-api service registered in eureka here:
 ```
 http://localhost:8761/
 ```
 
-And you can access the people-api and it's swagger here: 
+And you can directly access the people-api and it's swagger here: 
+```
+http://localhost:8081/people
+http://localhost:8081/swagger-ui.html
+```
+For accessing both via the edge server use:
 ```
 http://localhost:9081/people-service/people
 http://localhost:9081/people-service/swagger-ui.html
 ```
 
-## Swagger
-
-Swagger is integrated and available in this URL:
-
-```
-http://IP_ADDRESS:PORT/swagger-ui.html
-```
-
 ## Postman
 There is a Postman Collection included to test the api.
 
-Install Newman in your machine
+To run it from the command line install Newman in your machine.
 
 ```
-$ npm install -g newman
+npm install -g newman
 ```
   
-You can run it with newman with this command:
+You can use Newman to run it with this command:
 ```
 newman run postman/collection.json -e postman/env.json
 ```
@@ -64,7 +65,7 @@ newman run postman/collection.json -e postman/env.json
 The project has integrated a docker plugin so you can generate a docker image using the following Gradle task:
 
 ```
-$ ./gradlew build docker
+./gradlew build docker
 ```
 
 Don't forget to pass the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to make it work locally.
@@ -74,7 +75,7 @@ For any other environment the credentials should be provided by the CI server.
 
 ## Dynamo
 
-In order to make the API works and establish a connection with Dynamo (Cloud DB provided by AWS) you'll need to export the following environment variables:
+In order to make the API work and establish a connection with Dynamo (Cloud DB provided by AWS) you'll need to export the following environment variables:
 
 ```
 export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY"
@@ -113,7 +114,7 @@ Setting the environment variables
 Run or Debug
 
 ```
-Now, you can run or debug the app from IntelliJ, you can use JRbel to debug and redeploy the app.
+Now, you can run or debug the app from the IntelliJ terminal. You can use JRbel to debug and redeploy the app.
 ```
 
 ## Examining Code Quality locally precommit
