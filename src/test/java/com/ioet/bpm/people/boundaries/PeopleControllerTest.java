@@ -34,10 +34,41 @@ public class PeopleControllerTest {
 
     @Test
     public void peopleAreListedUsingTheRepository() {
-        ResponseEntity<Iterable> persons = personController.getAllPersons();
+        ResponseEntity<Iterable> persons = (ResponseEntity<Iterable>) personController.findPersonByEmail(null);
 
         assertEquals(HttpStatus.OK, persons.getStatusCode());
         verify(personRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void aPersonIsFoundByEmail() {
+        String email = "some_email";
+
+        personController.findPersonByEmail(email);
+
+        verify(personRepository, times(1)).findPersonByAuthenticationIdentity(email);
+    }
+
+    @Test
+    public void theBodyContainsThePersonFoundByEmail() {
+        String personEmailToFind = "some_email";
+        Person personFound = mock(Person.class);
+        when(personRepository.findPersonByAuthenticationIdentity(personEmailToFind)).thenReturn(Optional.of(personFound));
+
+        ResponseEntity<Person> existingPersonResponse = (ResponseEntity<Person>) personController.findPersonByEmail(personEmailToFind);
+
+        assertEquals(personFound, existingPersonResponse.getBody());
+        assertEquals(HttpStatus.OK, existingPersonResponse.getStatusCode());
+    }
+
+    @Test
+    public void thePersonWasNotFoundByEmail() {
+        String personEmailToFind = "some_email";
+        when(personRepository.findPersonByAuthenticationIdentity(personEmailToFind)).thenReturn(Optional.empty());
+
+        ResponseEntity<Person> existingPersonResponse = (ResponseEntity<Person>) personController.findPersonByEmail(personEmailToFind);
+
+        assertEquals(HttpStatus.NOT_FOUND, existingPersonResponse.getStatusCode());
     }
 
     @Test

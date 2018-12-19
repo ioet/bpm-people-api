@@ -30,16 +30,6 @@ public class PersonController {
 
     private PasswordManagementService passwordManagementService;
 
-    @ApiOperation(value = "Return a list of all persons", response = Person.class, responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Persons successfully returned")
-    })
-    @GetMapping(produces = "application/json")
-    public ResponseEntity<Iterable> getAllPersons() {
-        Iterable<Person> persons = this.personRepository.findAll();
-        return new ResponseEntity<>(persons, HttpStatus.OK);
-    }
-
     @ApiOperation(value = "Return one person", response = Person.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Person successfully returned")
@@ -50,6 +40,23 @@ public class PersonController {
         return personOptional.map(
                 person -> new ResponseEntity<>(person, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @ApiOperation(value = "Return one person by email or all persons", response = Person.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Person(s) successfully returned")
+    })
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<?> findPersonByEmail(@RequestParam(value = "email", required = false) String email) {
+        if (email == null) {
+            Iterable<Person> persons = this.personRepository.findAll();
+            return new ResponseEntity<>(persons, HttpStatus.OK);
+        } else {
+            Optional<Person> personOptional = personRepository.findPersonByAuthenticationIdentity(email);
+            return personOptional.map(
+                    person -> new ResponseEntity<>(person, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
     }
 
     @ApiOperation(value = "Create a new person", response = Person.class)
