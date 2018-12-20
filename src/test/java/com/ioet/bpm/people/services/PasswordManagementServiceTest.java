@@ -6,9 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import java.util.Base64;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -30,7 +28,7 @@ public class PasswordManagementServiceTest {
         String password = "ioet";
 
         boolean correct = passwordManagementService.verifyPassword(password, hash, salt);
-        assertEquals(correct, true);
+        assertEquals(true, correct);
         assertEquals(salt.length, new byte[64].length);
 
     }
@@ -53,7 +51,7 @@ public class PasswordManagementServiceTest {
         byte[] comparisonHash = passwordManagementService.calculateHash(password, salt);
         boolean verify = passwordManagementService.comparePasswords(hash, comparisonHash);
 
-        assertEquals(verify, true);
+        assertEquals(true,verify);
 
     }
 
