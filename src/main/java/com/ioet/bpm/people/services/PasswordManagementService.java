@@ -7,8 +7,7 @@ import com.ioet.bpm.people.repositories.PasswordHistoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -25,14 +24,11 @@ public class PasswordManagementService {
 
     private final PasswordHistoryRepository passwordHistoryRepository;
 
-
-
     public String encryptPassword(String password) {
         byte[] salt = generateSalt();
         byte[] hash = calculateHash(password, salt);
         return Base64.getEncoder().encodeToString(salt).concat(":").concat(Base64.getEncoder().encodeToString(hash));
     }
-
 
     byte[] calculateHash(String password, byte[] salt) {
         byte[] hash = new byte[64];
@@ -40,14 +36,14 @@ public class PasswordManagementService {
             MessageDigest md = MessageDigest.getInstance(ALGORITHM);
             md.reset();
             md.update(salt);
-            hash = md.digest(password.getBytes("UTF-8"));
+            hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
 
             for (int i = 0; i < ITERATIONS; i++) {
                 md.reset();
                 hash = md.digest(hash);
             }
 
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
+        } catch (NoSuchAlgorithmException ex) {
             log.error(ex.getMessage(), ex);
         }
         return hash;
