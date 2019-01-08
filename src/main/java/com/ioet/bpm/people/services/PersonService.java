@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.dozer.DozerBeanMapper;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.api.TypeMappingOptions;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.Optional;
@@ -43,5 +45,17 @@ public class PersonService {
 
     public boolean emailChanged(Person oldPerson, Person personToUpdate) {
         return !oldPerson.getAuthenticationIdentity().equals(personToUpdate.getAuthenticationIdentity());
+    }
+
+    public ResponseEntity<?> findPeopleByEmail(String email) {
+        if (email == null) {
+            Iterable<Person> persons = this.personRepository.findAll();
+            return new ResponseEntity<>(persons, HttpStatus.OK);
+        } else {
+            Optional<Person> personOptional = personRepository.findPersonByAuthenticationIdentity(email);
+            return personOptional.map(
+                    person -> new ResponseEntity<>(person, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
     }
 }

@@ -48,15 +48,7 @@ public class PersonController {
     })
     @GetMapping(produces = "application/json")
     public ResponseEntity<?> findPersonByEmail(@RequestParam(value = "email", required = false) String email) {
-        if (email == null) {
-            Iterable<Person> persons = this.personRepository.findAll();
-            return new ResponseEntity<>(persons, HttpStatus.OK);
-        } else {
-            Optional<Person> personOptional = personRepository.findPersonByAuthenticationIdentity(email);
-            return personOptional.map(
-                    person -> new ResponseEntity<>(person, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        }
+        return personService.findPeopleByEmail(email);
     }
 
     @ApiOperation(value = "Create a new person", response = Person.class)
