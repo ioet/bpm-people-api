@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -47,15 +49,21 @@ public class PersonService {
         return !oldPerson.getAuthenticationIdentity().equals(personToUpdate.getAuthenticationIdentity());
     }
 
-    public ResponseEntity<?> findPeopleByEmail(String email) {
+    public Iterable<Person> findPeopleByEmail(String email) {
+        Iterable<Person> persons;
         if (email == null) {
-            Iterable<Person> persons = this.personRepository.findAll();
-            return new ResponseEntity<>(persons, HttpStatus.OK);
+            persons = this.personRepository.findAll();
         } else {
             Optional<Person> personOptional = personRepository.findPersonByAuthenticationIdentity(email);
-            return personOptional.map(
-                    person -> new ResponseEntity<>(person, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            if (personOptional.isPresent()) {
+                ArrayList<Person> personList = (new ArrayList<>(1));
+                personList.add(personOptional.get());
+                return personList;
+            } else {
+                return null;
+            }
         }
+
+        return persons;
     }
 }
