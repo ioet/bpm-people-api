@@ -48,11 +48,11 @@ public class PersonController {
     })
     @GetMapping(produces = "application/json")
     public ResponseEntity<?> findPersonByEmail(@RequestParam(value = "email", required = false) String email) {
-        Iterable<Person> personIterable = personService.findPeopleByEmail(email);
-        if (personIterable == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Iterable<Person> foundPeople = personService.findPeopleByEmail(email);
+        if (foundPeople.iterator().hasNext()) {
+            return new ResponseEntity<>(foundPeople, HttpStatus.OK);
         }
-        return new ResponseEntity<>(personIterable, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @ApiOperation(value = "Create a new person", response = Person.class)

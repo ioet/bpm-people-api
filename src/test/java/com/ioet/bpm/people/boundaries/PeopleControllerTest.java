@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -33,9 +34,23 @@ public class PeopleControllerTest {
     @InjectMocks
     private PersonController personController;
 
+    private Iterable<Person> getIterable(boolean hasContent) {
+        return () -> new Iterator<Person>() {
+            @Override
+            public boolean hasNext() {
+                return hasContent;
+            }
+
+            @Override
+            public Person next() {
+                return null;
+            }
+        };
+    }
+
     @Test
     public void peopleAreListedUsingTheRepository() {
-        Iterable<Person> personFound = mock(Iterable.class);
+        Iterable<Person> personFound = getIterable(true);
         when(personService.findPeopleByEmail(null)).thenReturn(personFound);
 
         ResponseEntity<Iterable> persons = (ResponseEntity<Iterable>) personController.findPersonByEmail(null);
@@ -47,7 +62,7 @@ public class PeopleControllerTest {
     @Test
     public void aPersonIsFoundByEmail() {
         String email = "some_email";
-        Iterable<Person> personFound = mock(Iterable.class);
+        Iterable<Person> personFound = getIterable(true);
         when(personService.findPeopleByEmail(email)).thenReturn(personFound);
 
         personController.findPersonByEmail(email);
@@ -58,7 +73,7 @@ public class PeopleControllerTest {
     @Test
     public void theBodyContainsThePersonFoundByEmail() {
         String email = "some_email";
-        Iterable<Person> personFound = mock(Iterable.class);
+        Iterable<Person> personFound = getIterable(true);
         when(personService.findPeopleByEmail(email)).thenReturn(personFound);
 
         ResponseEntity<?> existingPersonResponse = personController.findPersonByEmail(email);
@@ -70,7 +85,7 @@ public class PeopleControllerTest {
     @Test
     public void thePersonWasNotFoundByEmail() {
         String email = "some_email";
-        when(personService.findPeopleByEmail(email)).thenReturn(null);
+        when(personService.findPeopleByEmail(email)).thenReturn(getIterable(false));
 
         ResponseEntity<Person> existingPersonResponse = (ResponseEntity<Person>) personController.findPersonByEmail(email);
 

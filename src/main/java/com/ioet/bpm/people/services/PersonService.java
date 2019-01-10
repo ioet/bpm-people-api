@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,15 +56,9 @@ public class PersonService {
             persons = this.personRepository.findAll();
         } else {
             Optional<Person> personOptional = personRepository.findPersonByAuthenticationIdentity(email);
-            if (personOptional.isPresent()) {
-                ArrayList<Person> personList = (new ArrayList<>(1));
-                personList.add(personOptional.get());
-                return personList;
-            } else {
-                return null;
-            }
+            persons = new ArrayList<>();
+            personOptional.ifPresent(((ArrayList<Person>) persons)::add);
         }
-
         return persons;
     }
 }

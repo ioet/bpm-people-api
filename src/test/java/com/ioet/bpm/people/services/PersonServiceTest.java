@@ -84,6 +84,6 @@ public class PersonServiceTest {
     public void whenEmailIsNotFoundReturnNull() {
         String email = "some_email";
         Iterable<Person> personFound = personService.findPeopleByEmail(email);
-        assertNull(personFound);
+        assertFalse(personFound.iterator().hasNext());
     }
 }
