@@ -14,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -32,12 +33,62 @@ public class PeopleControllerTest {
     @InjectMocks
     private PersonController personController;
 
+    private Iterable<Person> getIterable(boolean hasContent) {
+        return () -> new Iterator<Person>() {
+            @Override
+            public boolean hasNext() {
+                return hasContent;
+            }
+
+            @Override
+            public Person next() {
+                return null;
+            }
+        };
+    }
+
     @Test
     public void peopleAreListedUsingTheRepository() {
-        ResponseEntity<Iterable> persons = personController.getAllPersons();
+        Iterable<Person> personFound = getIterable(true);
+        when(personService.findPeopleByEmail(null)).thenReturn(personFound);
+
+        ResponseEntity<Iterable> persons = (ResponseEntity<Iterable>) personController.findPeople(null);
 
         assertEquals(HttpStatus.OK, persons.getStatusCode());
-        verify(personRepository, times(1)).findAll();
+        verify(personService, times(1)).findPeopleByEmail(null);
+    }
+
+    @Test
+    public void aPersonIsFoundByEmail() {
+        String email = "some_email";
+        Iterable<Person> personFound = getIterable(true);
+        when(personService.findPeopleByEmail(email)).thenReturn(personFound);
+
+        personController.findPeople(email);
+
+        verify(personService, times(1)).findPeopleByEmail(email);
+    }
+
+    @Test
+    public void theBodyContainsThePersonFoundByEmail() {
+        String email = "some_email";
+        Iterable<Person> personFound = getIterable(true);
+        when(personService.findPeopleByEmail(email)).thenReturn(personFound);
+
+        ResponseEntity<?> existingPersonResponse = personController.findPeople(email);
+
+        assertEquals(personFound, existingPersonResponse.getBody());
+        assertEquals(HttpStatus.OK, existingPersonResponse.getStatusCode());
+    }
+
+    @Test
+    public void thePersonWasNotFoundByEmail() {
+        String email = "some_email";
+        when(personService.findPeopleByEmail(email)).thenReturn(getIterable(false));
+
+        ResponseEntity<Person> existingPersonResponse = (ResponseEntity<Person>) personController.findPeople(email);
+
+        assertEquals(HttpStatus.NOT_FOUND, existingPersonResponse.getStatusCode());
     }
 
     @Test
