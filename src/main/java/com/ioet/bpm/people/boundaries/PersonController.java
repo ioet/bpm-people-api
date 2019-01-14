@@ -42,12 +42,12 @@ public class PersonController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @ApiOperation(value = "Return one person by email or all persons", response = Person.class)
+    @ApiOperation(value = "Find people with coincidences with the email, if no email is provided it returns all the people", response = Person.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Person(s) successfully returned")
     })
     @GetMapping(produces = "application/json")
-    public ResponseEntity<?> findPersonByEmail(@RequestParam(value = "email", required = false) String email) {
+    public ResponseEntity<?> findPeople(@RequestParam(value = "email", required = false) String email) {
         Iterable<Person> foundPeople = personService.findPeopleByEmail(email);
         if (foundPeople.iterator().hasNext()) {
             return new ResponseEntity<>(foundPeople, HttpStatus.OK);

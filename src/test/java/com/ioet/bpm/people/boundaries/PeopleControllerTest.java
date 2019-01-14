@@ -14,7 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -53,7 +52,7 @@ public class PeopleControllerTest {
         Iterable<Person> personFound = getIterable(true);
         when(personService.findPeopleByEmail(null)).thenReturn(personFound);
 
-        ResponseEntity<Iterable> persons = (ResponseEntity<Iterable>) personController.findPersonByEmail(null);
+        ResponseEntity<Iterable> persons = (ResponseEntity<Iterable>) personController.findPeople(null);
 
         assertEquals(HttpStatus.OK, persons.getStatusCode());
         verify(personService, times(1)).findPeopleByEmail(null);
@@ -65,7 +64,7 @@ public class PeopleControllerTest {
         Iterable<Person> personFound = getIterable(true);
         when(personService.findPeopleByEmail(email)).thenReturn(personFound);
 
-        personController.findPersonByEmail(email);
+        personController.findPeople(email);
 
         verify(personService, times(1)).findPeopleByEmail(email);
     }
@@ -76,7 +75,7 @@ public class PeopleControllerTest {
         Iterable<Person> personFound = getIterable(true);
         when(personService.findPeopleByEmail(email)).thenReturn(personFound);
 
-        ResponseEntity<?> existingPersonResponse = personController.findPersonByEmail(email);
+        ResponseEntity<?> existingPersonResponse = personController.findPeople(email);
 
         assertEquals(personFound, existingPersonResponse.getBody());
         assertEquals(HttpStatus.OK, existingPersonResponse.getStatusCode());
@@ -87,7 +86,7 @@ public class PeopleControllerTest {
         String email = "some_email";
         when(personService.findPeopleByEmail(email)).thenReturn(getIterable(false));
 
-        ResponseEntity<Person> existingPersonResponse = (ResponseEntity<Person>) personController.findPersonByEmail(email);
+        ResponseEntity<Person> existingPersonResponse = (ResponseEntity<Person>) personController.findPeople(email);
 
         assertEquals(HttpStatus.NOT_FOUND, existingPersonResponse.getStatusCode());
     }
