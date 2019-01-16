@@ -85,6 +85,17 @@ export AWS_REGION="us-east-1"
 
 If you don't have AWS Credentials, feel free to ask Juan Garcia, Roland or Rene Enriquez for it. Your account needs to be part of the group bpm-people to have enough permission to access Dynamo tables which are part of this project. 
 
+## AWS Lambda Deployment
+If you have changes in the API code you need to deploy this changes to AWS Lambda for this use the created gradle tasks:
+
+```
+./gradlew deploy invoke
+```
+Deploy task upload our build.zip to Lambda.
+Invoke task is only tho show the Lambda Function send a response.
+
+These changes are automatically mapped to the API Gateway stage.
+
 ## Playing with the API
 So far you can create, query and delete people using the API. 
 
@@ -99,6 +110,19 @@ Create a new person
 
 ```
 curl -X POST http://localhost:8081/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authenticationIdentity": "youremail@domain.com"}'
+```
+
+## Playing with API Gateway
+Query people
+```
+curl -X GET  https://8iwffn7kpe.execute-api.us-east-1.amazonaws.com/ioet/people
+```
+
+
+Create a new person
+
+```
+curl -X POST  https://8iwffn7kpe.execute-api.us-east-1.amazonaws.com/ioet/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authenticationIdentity": "youremail@domain.com"}'
 ```
 ## Configuring IntelliJ IDE
 If you want to run the application from IntelliJ you must configure the required environment variables following the next steps:
