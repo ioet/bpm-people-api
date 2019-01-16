@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class )
 @JsonIgnoreProperties(value = {"password"}, allowSetters = true)
 @DynamoDBTable(tableName = "people_person")
 public class Person extends AuditLog {
