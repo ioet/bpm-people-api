@@ -31,18 +31,16 @@ public class PeopleApiLambdaHandlerTest {
             = new EnvironmentVariables();
 
     @Test
-    public void setEnvironmentVariable() throws Exception {
+    public void lambdaHandlerClassIsInitialized() throws Exception {
         environmentVariables.set("AWS_ACCESS_KEY_ID", "AKIAJV3HQDU44HTJTUYA");
         environmentVariables.set("AWS_SECRET_ACCESS_KEY", "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");
         environmentVariables.set("AWS_REGION", "us-east-1");
-        InputStream inputStream = mock(InputStream.class);
-        OutputStream outputStream = mock(OutputStream.class);
-        Context context = mock(Context.class);
+        ;
         PeopleApiLambdaHandler expectedHandler = mock(PeopleApiLambdaHandler.class);
 
         whenNew(PeopleApiLambdaHandler.class).withNoArguments().thenReturn(expectedHandler);
 
-        PeopleApiLambdaHandler actualhandler = new PeopleApiLambdaHandler();
+        PeopleApiLambdaHandler actualhandlHandler = new PeopleApiLambdaHandler();
 
         PowerMockito.verifyNew(PeopleApiLambdaHandler.class).withNoArguments();
     }
