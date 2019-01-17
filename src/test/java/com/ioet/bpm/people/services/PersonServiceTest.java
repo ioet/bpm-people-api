@@ -8,10 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -49,5 +49,41 @@ public class PersonServiceTest {
         Person oldPerson = Person.builder().authenticationIdentity("old@ioet.com").build();
         Person personToUpdate = Person.builder().authenticationIdentity("new@ioet.com").build();
         assertTrue(personService.emailChanged(oldPerson, personToUpdate));
+    }
+
+    @Test
+    public void findPeopleByEmailUsesPersonRepository() {
+        Iterable<Person> personIterable = mock(Iterable.class);
+        Optional<Person> personOptional = Optional.of(mock(Person.class));
+        when(personRepository.findAll()).thenReturn(personIterable);
+        when(personRepository.findPersonByAuthenticationIdentity("some_email")).thenReturn(personOptional);
+        personService.findPeopleByEmail(null);
+        personService.findPeopleByEmail("some_email");
+        verify(personRepository, times(1)).findAll();
+        verify(personRepository, times(1)).findPersonByAuthenticationIdentity("some_email");
+    }
+
+    @Test
+    public void whenNullEmailIsPassedReturnIterable() {
+        Iterable<Person> personExpected = mock(Iterable.class);
+        when(personRepository.findAll()).thenReturn(personExpected);
+        Iterable<Person> personFound = personService.findPeopleByEmail(null);
+        assertEquals(personExpected, personFound);
+    }
+
+    @Test
+    public void whenEmailIsFoundReturnIterable() {
+        String email = "some_email";
+        Optional<Person> personExpected = Optional.of(mock(Person.class));
+        when(personRepository.findPersonByAuthenticationIdentity(email)).thenReturn(personExpected);
+        ArrayList<Person> personFound = (ArrayList<Person>) personService.findPeopleByEmail(email);
+        assertEquals(personExpected.get(), personFound.get(0));
+    }
+
+    @Test
+    public void whenEmailIsNotFoundReturnEmptyIterable() {
+        String email = "some_email";
+        Iterable<Person> personFound = personService.findPeopleByEmail(email);
+        assertFalse(personFound.iterator().hasNext());
     }
 }

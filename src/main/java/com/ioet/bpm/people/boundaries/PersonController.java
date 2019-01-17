@@ -30,16 +30,6 @@ public class PersonController {
 
     private PasswordManagementService passwordManagementService;
 
-    @ApiOperation(value = "Return a list of all persons", response = Person.class, responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Persons successfully returned")
-    })
-    @GetMapping(produces = "application/json")
-    public ResponseEntity<Iterable> getAllPersons() {
-        Iterable<Person> persons = this.personRepository.findAll();
-        return new ResponseEntity<>(persons, HttpStatus.OK);
-    }
-
     @ApiOperation(value = "Return one person", response = Person.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Person successfully returned")
@@ -50,6 +40,19 @@ public class PersonController {
         return personOptional.map(
                 person -> new ResponseEntity<>(person, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @ApiOperation(value = "Find people with coincidences with the email, if no email is provided it returns all the people", response = Person.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Person(s) successfully returned")
+    })
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<?> findPeople(@RequestParam(value = "email", required = false) String email) {
+        Iterable<Person> foundPeople = personService.findPeopleByEmail(email);
+        if (foundPeople.iterator().hasNext()) {
+            return new ResponseEntity<>(foundPeople, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @ApiOperation(value = "Create a new person", response = Person.class)
