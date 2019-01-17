@@ -17,11 +17,11 @@ import java.io.OutputStream;
 
 public class PeopleApiLambdaHandler implements RequestStreamHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(PeopleApiLambdaHandler.class);
+    private Logger logger = LoggerFactory.getLogger(PeopleApiLambdaHandler.class);
 
-    public static final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+    public final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
 
-    static {
+    public PeopleApiLambdaHandler() {
         try {
             handler = SpringBootLambdaContainerHandler.getAwsProxyHandler (BpmPeopleApiApplication.class);
         } catch (ContainerInitializationException e) {
