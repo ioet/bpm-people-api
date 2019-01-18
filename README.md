@@ -119,9 +119,10 @@ Now, you can run or debug the app from the IntelliJ terminal. You can use JRbel 
 
 ## Examining Code Quality locally precommit
 
-Included in this repository is a tool (shell script) for examining the code as is in your current branch without requiring a commit first. To use this tool, you will need to create a GitHub token with which SonarCloud can integrate with GitHub on your behalf. To create said token, navegate to https://sonarcloud.io/account/security (log in as necessary with your GitHub account that is tied to this repository), enter a token name and click on the Generate button. A string will be displayed, which you should copy and store as your token (this string will never be displayed again, so be sure to save it in a safe place). Now you are ready to execute (in a Bash compatible shell):
+Included in this repository is a tool (shell script) for examining the code as is in your current branch without requiring a commit first. To use this tool, you will need to create a GitHub token with which SonarCloud can integrate with GitHub on your behalf. To create said token, navigate to https://sonarcloud.io/account/security (log in as necessary with your GitHub account that is tied to this repository), enter a token name and click on the Generate button. A string will be displayed, which you should copy and store as your token (this string will never be displayed again, so be sure to save it in a safe place). Now you are ready to execute (in a Bash compatible shell):
 
 ```bash
 SONAR_GITHUB_TOKEN=<my personal token created above> ./sonarcloud_analyze.sh
 ```
+This command will also send the analysis results to sonarcloud.io. For executing an analysis without sending these results, configure your Intellij IDEA to use the SonarLint plugin.
 
