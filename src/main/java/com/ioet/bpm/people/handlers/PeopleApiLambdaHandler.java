@@ -8,16 +8,16 @@ import com.amazonaws.serverless.proxy.spring.SpringBootLambdaContainerHandler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.ioet.bpm.people.BpmPeopleApiApplication;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
+@Slf4j
 public class PeopleApiLambdaHandler implements RequestStreamHandler {
 
-    private Logger logger = LoggerFactory.getLogger(PeopleApiLambdaHandler.class);
 
     public final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
 
@@ -26,7 +26,7 @@ public class PeopleApiLambdaHandler implements RequestStreamHandler {
             handler = SpringBootLambdaContainerHandler.getAwsProxyHandler (BpmPeopleApiApplication.class);
         } catch (ContainerInitializationException e) {
             String errMsg = "Could not initialize Spring Boot application";
-            logger.error(errMsg);
+            log.error(errMsg);
             throw new RuntimeException("Could not initialize Spring Boot application", e);
         }
     }

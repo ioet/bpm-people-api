@@ -63,8 +63,6 @@ dependencies {
     compile group: 'com.amazonaws.serverless', name: 'aws-serverless-java-container-core', version: '1.3'
     compile group: 'com.amazonaws.serverless', name: 'aws-serverless-java-container-spring', version: '1.3'
     testCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.19.0'
-    testCompile "org.powermock:powermock-mockito-release-full:1.6.4"
-    testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0-beta.5'
 }
 
 dependencyManagement {
@@ -78,7 +76,8 @@ test {
     jacoco {
         excludes += [
                 '**/config/**',
-                '**/BpmPeopleApiApplication.class'
+                '**/BpmPeopleApiApplication.class',
+                '**/handlers/PeopleApiLambdaHandler'
         ]
     }
 }
@@ -91,7 +90,8 @@ jacocoTestReport {
     jacocoTestReport {
         afterEvaluate {
             classDirectories = files(classDirectories.files.collect {
-                fileTree(dir: it, exclude: ['**/config/**', '**/BpmPeopleApiApplication.class'])
+                fileTree(dir: it, exclude: ['**/config/**', '**/BpmPeopleApiApplication.class',
+                                            '**/handlers/PeopleApiLambdaHandler.class'])
             })
         }
     }
