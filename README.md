@@ -1,3 +1,4 @@
+
 # bpm-people-api
 
 ## Build Status and Code coverage
@@ -26,7 +27,7 @@ To start the app, try running the following gradlew command:
 ./gradlew bootRun
 ```
 
-And you can directly access the people-api and it's swagger here: 
+And you can directly access the people-api and it's swagger here:
 ```
 http://localhost:8081/people
 http://localhost:8081/swagger-ui.html
@@ -40,30 +41,19 @@ To run it from the command line install Newman in your machine.
 ```
 npm install -g newman
 ```
-  
+
 You can use Newman to run the postman collection.
 
-Running locally
+### Running locally
 ```
 newman run postman/collectionPeopleApi.json -e postman/env.json
 ```
 
-Running against AWS
+### Running against AWS
 ```
 newman run postman/collectionPeopleApi.json -e postman/env.json
 ```
 
-## Dynamo
-
-In order to make the API work and establish a connection with Dynamo (Cloud DB provided by AWS) you'll need to export the following environment variables:
-
-```
-export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY"
-export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"
-export AWS_REGION="us-east-1"
-```
-
-If you don't have AWS Credentials, feel free to ask Juan Garcia, Roland or Rene Enriquez for it. Your account needs to be part of the group bpm-people to have enough permission to access Dynamo tables which are part of this project. 
 
 ## AWS Lambda Deployment
 If you have changes in the API code you need to deploy this changes to AWS Lambda for this use the created gradle tasks:
@@ -77,7 +67,9 @@ Invoke task is only tho show the Lambda Function send a response.
 These changes are automatically mapped to the API Gateway stage.
 
 ## Playing with the API
-So far you can create, query and delete people using the API. 
+
+### Locally
+So far you can create, query and delete people using the API.
 
 Query people
 
@@ -92,7 +84,7 @@ Create a new person
 curl -X POST http://localhost:8081/people -H 'Content-Type: application/json' -d '{ "name":"Your Name", "authenticationIdentity": "youremail@domain.com"}'
 ```
 
-## Playing with API Gateway
+### In AWS
 Query people
 ```
 curl -X GET  https://8iwffn7kpe.execute-api.us-east-1.amazonaws.com/ioet/people
@@ -128,5 +120,4 @@ Included in this repository is a tool (shell script) for examining the code as i
 ```bash
 SONAR_GITHUB_TOKEN=<my personal token created above> ./sonarcloud_analyze.sh
 ```
-This command will also send the analysis results to sonarcloud.io. For executing an analysis without sending these results, configure your Intellij IDEA to use the SonarLint plugin.
-
+This command will also send the analysis results to sonarcloud.io. For executing an analysis without sending these results, configure your IntelliJ IDEA to use the SonarLint plugin.
