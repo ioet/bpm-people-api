@@ -59,7 +59,7 @@ newman run postman/collectionPeopleApi.json -e postman/env.json
 If you have changes in the API code you need to deploy this changes to AWS Lambda for this use the created gradle tasks:
 
 ```
-./gradlew deploy invoke
+./gradlew deploy
 ```
 Deploy task upload our build.zip to Lambda.
 Invoke task is only tho show the Lambda Function send a response.
