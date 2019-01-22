@@ -110,7 +110,7 @@ aws {
 
 task deploy(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
     functionName = "people-api"
-    handler = "com.ioet.bpm.people.handlers.PeopleApiLambdaHandler::handleRequest"
+    handler = "com.ioet.bpm.people.aws.handlers.PeopleApiLambdaHandler::handleRequest"
     role = "arn:aws:iam::524819651720:role/API-lambda-deployment"
     runtime = Runtime.Java8
     zipFile = buildZip.archivePath
