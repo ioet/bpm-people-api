@@ -118,13 +118,13 @@ build.dependsOn buildZip
 // Gradle AWS Plugin
 aws {
     profileName = "default"
-    region = "us-east-1"
+    region = System.getenv("AWS_REGION")
 }
 
 task deploy(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
     functionName = "people-api"
     handler = "com.ioet.bpm.people.handlers.PeopleApiLambdaHandler::handleRequest"
-    role = "arn:aws:iam::524819651720:role/API-lambda-deployment"
+    role = System.getenv("PEOPLE_API_ARN")
     runtime = Runtime.Java8
     zipFile = buildZip.archivePath
     timeout = 50

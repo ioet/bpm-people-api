@@ -14,6 +14,7 @@ Make sure you have an AWS account and you have exported your credentials in the 
 export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY"
 export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"
 export AWS_REGION="us-east-1"
+export PEOPLE_API_ARN = "ARN_OF_IAM_ROLE"
 ```
 
 You should write them into the bashrc-file as well, so that they are loaded each time you open a terminal.
