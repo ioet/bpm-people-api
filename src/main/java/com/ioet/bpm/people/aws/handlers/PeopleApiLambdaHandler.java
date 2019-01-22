@@ -1,4 +1,4 @@
-package com.ioet.bpm.people.handlers;
+package com.ioet.bpm.people.aws.handlers;
 
 
 import com.amazonaws.serverless.exceptions.ContainerInitializationException;
