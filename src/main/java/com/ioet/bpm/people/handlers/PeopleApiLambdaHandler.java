@@ -20,14 +20,8 @@ public class PeopleApiLambdaHandler implements RequestStreamHandler {
 
     public final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
 
-    public PeopleApiLambdaHandler() {
-        try {
-            handler = SpringBootLambdaContainerHandler.getAwsProxyHandler (BpmPeopleApiApplication.class);
-        } catch (ContainerInitializationException e) {
-            String errMsg = "Could not initialize Spring Boot application";
-            log.error(errMsg);
-            throw new RuntimeException("Could not initialize Spring Boot application", e);
-        }
+    public PeopleApiLambdaHandler() throws ContainerInitializationException {
+        handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(BpmPeopleApiApplication.class);
     }
 
     @Override
