@@ -51,7 +51,7 @@ newman run postman/collectionPeopleApi.json -e postman/env.json
 
 ### Running against AWS
 ```
-newman run postman/collectionPeopleApi.json -e postman/env.json
+newman run postman/collectionPeopleApi.json -e postman/aws-env.json
 ```
 
 
