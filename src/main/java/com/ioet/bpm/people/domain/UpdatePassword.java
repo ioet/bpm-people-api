@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class )
-
 public class UpdatePassword {
 
     private String oldPassword;

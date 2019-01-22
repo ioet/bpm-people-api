@@ -9,12 +9,11 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.ioet.bpm.people.BpmPeopleApiApplication;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 @Slf4j
 public class PeopleApiLambdaHandler implements RequestStreamHandler {
 

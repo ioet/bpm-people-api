@@ -20,30 +20,16 @@ You should write them into the bashrc-file as well, so that they are loaded each
 ```
 vim ~/.bashrc
 ```
-Then you will be able to pull the docker images using the following command:
 
-```
-docker-compose up
-```
-Then start the people-api using your IDE or the following command. This should also work if `docker-compose up` failed.
+To start the app, try running the following gradlew command:
 ```
 ./gradlew bootRun
-```
-
-If you have run `docker-compose up`, you will be able to see the people-api service registered in eureka here:
-```
-http://localhost:8761/
 ```
 
 And you can directly access the people-api and it's swagger here: 
 ```
 http://localhost:8081/people
 http://localhost:8081/swagger-ui.html
-```
-For accessing both via the edge server use:
-```
-http://localhost:9081/people-service/people
-http://localhost:9081/people-service/swagger-ui.html
 ```
 
 ## Postman
@@ -55,23 +41,17 @@ To run it from the command line install Newman in your machine.
 npm install -g newman
 ```
   
-You can use Newman to run it with this command:
-```
-newman run postman/collection.json -e postman/env.json
-```
+You can use Newman to run the postman collection.
 
-## Docker
-
-The project has integrated a docker plugin so you can generate a docker image using the following Gradle task:
-
+Running locally
 ```
-./gradlew build docker
+newman run postman/collectionPeopleApi.json -e postman/env.json
 ```
 
-Don't forget to pass the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to make it work locally.
-For any other environment the credentials should be provided by the CI server.
-
-
+Running against AWS
+```
+newman run postman/collectionPeopleApi.json -e postman/env.json
+```
 
 ## Dynamo
 
