@@ -13,13 +13,12 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0')
         classpath "jp.classmethod.aws:gradle-aws-plugin:0.22"
     }
 }
 
 plugins {
-    id "org.sonarqube" version "2.6"
+    id "org.sonarqube" version "2.7"
 }
 
 
@@ -52,9 +51,7 @@ dependencies {
     compileOnly('org.projectlombok:lombok')
     annotationProcessor 'org.projectlombok:lombok'
     testCompile('org.springframework.boot:spring-boot-starter-test')
-
     compile group: 'net.sf.dozer', name: 'dozer', version: '5.5.1'
-
     compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
     compile 'com.amazonaws:aws-lambda-java-events:1.1.0'
     compile group: 'com.amazonaws.serverless', name: 'aws-serverless-java-container-core', version: '1.3'
