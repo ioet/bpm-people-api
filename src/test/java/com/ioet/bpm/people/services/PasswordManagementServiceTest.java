@@ -58,14 +58,14 @@ public class PasswordManagementServiceTest {
     @Test
     public void providedPasswordIsCorrectTest() {
         Person personToUpdate = mock(Person.class);
-        UpdatePassword updatePassword = mock(UpdatePassword.class);
+        UpdatePassword updatePassword = new UpdatePassword();
         String encrypt = "su5WnNHKHjZLJwmcIniJOmrEV2QsDsZrS/VJAoB4JH51vKyqf57zsTqr3BcfWc6Hj7QfGv8b3jy9M9N/aRlphw==:Vy047jiAneXBIvWsDyFtSGQ4Kh6bEggTglQ7vBxenoK8YdEDEMYKof7MDU7rjpOD6/Cgr5cp60iT1XFYn9qZgQ==";
         when(personToUpdate.getPassword()).thenReturn(encrypt);
         String password = "ioet";
-        when(updatePassword.getOldPassword()).thenReturn(password);
+        updatePassword.setOldPassword(password);
         String newPassword = "ioetabc";
-        when(updatePassword.getNewPassword()).thenReturn(newPassword);
-        when(updatePassword.getNewPasswordConfirmation()).thenReturn(newPassword);
+        updatePassword.setNewPassword(newPassword);
+        updatePassword.setNewPasswordConfirmation(newPassword);
 
         boolean correct = passwordManagementService.isProvidedPasswordCorrect(personToUpdate, updatePassword);
 
