@@ -70,7 +70,7 @@ test {
         excludes += [
                 '**/config/**',
                 '**/BpmPeopleApiApplication.class',
-                '**/handler/PeopleApiLambdaHandler'
+                '**/aws/**'
         ]
     }
 }
@@ -82,8 +82,7 @@ jacocoTestReport {
     }
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['**/config/**', '**/BpmPeopleApiApplication.class',
-                                        '**/handler/PeopleApiLambdaHandler.class'])
+            fileTree(dir: it, exclude: ['**/config/**', '**/BpmPeopleApiApplication.class', '**/aws/**'])
         })
     }
 }
