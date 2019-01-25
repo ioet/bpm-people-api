@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class )
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @DynamoDBTable(tableName = "people_password_history")
 public class PasswordHistory extends AuditLog {
 

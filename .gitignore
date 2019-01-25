@@ -25,3 +25,5 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+output-sam-people-api.yml

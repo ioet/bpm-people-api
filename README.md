@@ -54,17 +54,35 @@ newman run postman/collectionPeopleApi.json -e postman/env.json
 newman run postman/collectionPeopleApi.json -e postman/aws-env.json
 ```
 
+## Deploying as Lambda
 
-## AWS Lambda Deployment
-If you have changes in the API code you need to deploy this changes to AWS Lambda for this use the created gradle tasks:
-
+### Create a S3 bucket
 ```
-./gradlew deploy
+aws s3 mb s3://cf-template-spring-boot-apps-as-lambda
 ```
-Deploy task upload our build.zip to Lambda.
-Invoke task is only tho show the Lambda Function send a response.
 
-These changes are automatically mapped to the API Gateway stage.
+### Generate the bundle
+```
+./gradlew buildZip
+```
+
+### Package the CouldFormation template
+```
+aws cloudformation package --template-file sam-people-api.yml --output-template-file output-sam-people-api.yml --s3-bucket cf-template-spring-boot-apps-as-lambda --s3-prefix people-api
+```
+
+### Deploy the code as lambda
+
+
+- Deploy the code to AWS
+```
+aws cloudformation deploy --template-file output-sam-people-api.yml --stack-name bpm-people-api --capabilities CAPABILITY_IAM
+```
+
+- Get the URL
+```
+aws cloudformation describe-stacks --stack-name bpm-people-api
+```
 
 ## Playing with the API
 

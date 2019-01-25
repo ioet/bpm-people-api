@@ -70,7 +70,7 @@ test {
         excludes += [
                 '**/config/**',
                 '**/BpmPeopleApiApplication.class',
-                '**/handlers/PeopleApiLambdaHandler'
+                '**/handler/PeopleApiLambdaHandler'
         ]
     }
 }
@@ -83,7 +83,7 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it, exclude: ['**/config/**', '**/BpmPeopleApiApplication.class',
-                                        '**/handlers/PeopleApiLambdaHandler.class'])
+                                        '**/handler/PeopleApiLambdaHandler.class'])
         })
     }
 }
@@ -99,19 +99,3 @@ task buildZip(type: Zip) {
 }
 
 build.dependsOn buildZip
-
-// Gradle AWS Plugin
-aws {
-    profileName = "default"
-    region = "us-east-1"
-}
-
-task deploy(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
-    functionName = "people-api"
-    handler = "com.ioet.bpm.people.aws.handlers.PeopleApiLambdaHandler::handleRequest"
-    role = "arn:aws:iam::524819651720:role/API-lambda-deployment"
-    runtime = Runtime.Java8
-    zipFile = buildZip.archivePath
-    timeout = 50
-}
-
