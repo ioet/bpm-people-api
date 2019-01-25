@@ -1,4 +1,4 @@
-package com.ioet.bpm.people.aws.handlers;
+package com.ioet.bpm.people.aws.handler;
 
 
 import com.amazonaws.serverless.exceptions.ContainerInitializationException;
@@ -15,12 +15,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 @Slf4j
-public class PeopleApiLambdaHandler implements RequestStreamHandler {
+public class AwsLambdaHandler implements RequestStreamHandler {
 
 
-    public final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+    private final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
 
-    public PeopleApiLambdaHandler() throws ContainerInitializationException {
+    public AwsLambdaHandler() throws ContainerInitializationException {
         handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(BpmPeopleApiApplication.class);
     }
 
