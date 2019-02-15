@@ -66,7 +66,9 @@ public class PersonController {
         }
 
         person.setAuthenticationProvider("ioet.com");
-        person.setPassword(passwordManagementService.encryptPassword(person.getPassword()));
+        // at the moment the password functionality is not needed
+        // it should be possible to create a person without a password
+        // person.setPassword(passwordManagementService.encryptPassword(person.getPassword()));
         Person personCreated = personRepository.save(person);
         return new ResponseEntity<>(personCreated, HttpStatus.CREATED);
     }
