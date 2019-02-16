@@ -110,6 +110,23 @@ public class PeopleControllerTest {
     }
 
     @Test
+    public void whenAPersonIsCreatedWithoutPasswordTheNewPersonIsReturned() {
+        Person personCreated = mock(Person.class);
+        Person personToCreate = new Person();
+        personToCreate.setName("Jorge Malla");
+        personToCreate.setAuthenticationIdentity("jmalla@ioet.com");
+        when(personRepository.save(personToCreate)).thenReturn(personCreated);
+
+        ResponseEntity<Person> personCreatedResponse;
+        personCreatedResponse = (ResponseEntity<Person>) personController.createPerson(personToCreate);
+
+        assertEquals(personCreated, personCreatedResponse.getBody());
+        assertEquals(HttpStatus.CREATED, personCreatedResponse.getStatusCode());
+        verify(personRepository, times(1)).save(personToCreate);
+        verify(passwordManagementService, never()).encryptPassword(anyString());
+    }
+
+    @Test
     public void whenAPersonIsCreatedWithAnExistingAuthenticationIdentityAnErrorMessageIsReturned() {
         Person personToCreate = new Person();
         personToCreate.setPassword("ioet");
