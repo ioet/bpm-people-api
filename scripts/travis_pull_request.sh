@@ -8,7 +8,7 @@ npm run build
 case ${TRAVIS_BRANCH} in
     master)
         pulumi stack select staging
-        pulumi preview
+        pulumi update --yes
         ;;
     #production)
     #    pulumi stack select acme/website-production
