@@ -23,7 +23,7 @@ script:
  - docker push 524819651720.dkr.ecr.us-east-1.amazonaws.com/bpm-people-api:$TRAVIS_BUILD_ID
  - docker tag bpm-people-api:latest 524819651720.dkr.ecr.us-east-1.amazonaws.com/bpm-people-api:latest
  - docker push 524819651720.dkr.ecr.us-east-1.amazonaws.com/bpm-people-api:latest
- - ./scripts/travis_${TRAVIS_EVENT_TYPE}.sh
+ - ./scripts/travis_pull_request.sh
 addons:
   sonarcloud:
     organization: 'ioet'
