@@ -7,7 +7,7 @@ npm run build
 # Update the stack
 case ${TRAVIS_BRANCH} in
     master)
-        pulumi stack select bpm-people-api-ops/staging
+        pulumi stack select staging
         pulumi update --yes
         ;;
     #production)
