@@ -1,0 +1,8 @@
+config:
+  aws:region: us-east-1
+  bpm-people-api-ops:AWS_ACCESS_KEY_ID:
+    secure: AAABAIreESGPfK1vZ/bLrfisWw5NarUXFWm6HdQSm45oiFusljp1huLlmXrEfLOdIWPqoA==
+  bpm-people-api-ops:AWS_SECRET_ACCESS_KEY:
+    secure: AAABAFioRnYtzAkQH8JrZ8V6/Rr8JIT8fcriGPseO1/SdCCwnvaqrCCmnJvSMnBcAzCOkovRgiaNhC+8AVpguOluynErecGd
+  cloud-aws:useFargate: "true"
+  cloud:provider: aws
