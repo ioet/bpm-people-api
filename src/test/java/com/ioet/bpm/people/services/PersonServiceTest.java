@@ -2,6 +2,7 @@ package com.ioet.bpm.people.services;
 
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.repositories.PersonRepository;
+import com.ioet.bpm.people.services.PersonService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
