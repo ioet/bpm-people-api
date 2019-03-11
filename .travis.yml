@@ -25,6 +25,7 @@ script:
  - docker tag bpm-people-api:latest 524819651720.dkr.ecr.us-east-1.amazonaws.com/bpm-people-api:latest
  - docker push 524819651720.dkr.ecr.us-east-1.amazonaws.com/bpm-people-api:latest
  - ./scripts/travis_pull_request.sh
+ - ./scripts/travis_push.sh
 addons:
   sonarcloud:
     organization: 'ioet'
