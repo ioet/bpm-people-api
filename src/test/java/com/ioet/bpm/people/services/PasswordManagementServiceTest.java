@@ -2,6 +2,7 @@ package com.ioet.bpm.people.services;
 
 import com.ioet.bpm.people.domain.Person;
 import com.ioet.bpm.people.domain.UpdatePassword;
+import com.ioet.bpm.people.services.PasswordManagementService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

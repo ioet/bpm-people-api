@@ -15,6 +15,7 @@ import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRep
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class DynamoDBConfig {
     }
 
 
-    @Bean
+//    @Bean
     public InitializingBean initializeTables(AmazonDynamoDB amazonDynamoDB) {
         return () -> {
             DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
