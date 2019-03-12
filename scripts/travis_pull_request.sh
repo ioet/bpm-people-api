@@ -3,11 +3,11 @@ echo "Travis pull_request job"
 # Download dependencies and build
 npm install
 npm run build
+pulumi stack select staging
 
 # Preview changes that would be made if the PR were merged.
 case ${TRAVIS_BRANCH} in
     master)
-        pulumi stack select staging
         pulumi update --yes
         ;;
     #production)

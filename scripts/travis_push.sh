@@ -3,11 +3,11 @@ echo "Travis push job"
 # Download dependencies and build
 npm install
 npm run build
+pulumi stack select staging
 
 # Update the stack
 case ${TRAVIS_BRANCH} in
     master)
-        pulumi stack select staging
         pulumi update --yes
         ;;
     #production)
