@@ -2,7 +2,7 @@
 	"values": [
 		{
 			"key": "url",
-			"value": "https://8iwffn7kpe.execute-api.us-east-1.amazonaws.com/ioet",
+			"value": "http://9af40283-6f9e657-81500b460dcda187.elb.us-east-1.amazonaws.com:8081",
 			"enabled": true
 		}
 	]
