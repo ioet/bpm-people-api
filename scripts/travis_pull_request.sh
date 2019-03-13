@@ -16,7 +16,7 @@ pulumi update --yes
     #    pulumi stack select acme/website-production
     #    pulumi preview
     #    ;;
-    *)
+#    *)
 #        echo "No Pulumi stack targeted by pull request branch ${TRAVIS_BRANCH}."
 #        ;;
 # esac
