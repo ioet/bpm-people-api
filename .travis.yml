@@ -5,7 +5,7 @@ jdk:
 services:
  - docker
 before_install:
-  - curl -L https://get.pulumi.com/ | bash -s -- --version 0.16.12
+  - curl -L https://get.pulumi.com/ | bash -s -- --version 0.17.1
   - export PATH=$PATH:$HOME/.pulumi/bin
   - chmod +x scripts/travis_pull_request.sh
   - chmod +x scripts/travis_push.sh
